@@ -2,6 +2,7 @@ package com.example.hospitalproject.Controller.User;
 
 import com.example.hospitalproject.Dto.User.UserRegisterRequestDto;
 import com.example.hospitalproject.Dto.User.UserGradeSearchRequestDto;
+import com.example.hospitalproject.Dto.User.UserSignInRequestDto;
 import com.example.hospitalproject.Response.Response;
 import com.example.hospitalproject.Service.User.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,12 @@ public class UserRestController {
     @ResponseStatus(HttpStatus.OK)
     public Response signUp(@RequestBody @Valid UserRegisterRequestDto userRegisterRequestDto){
         return Response.success(userService.signUp(userRegisterRequestDto));
+    }
+
+    @PostMapping("/signIn")
+    @ResponseStatus(HttpStatus.OK)
+    public Response signIn(@RequestBody @Valid UserSignInRequestDto requestDto) {
+        return Response.success(userService.signIn(requestDto));
     }
 
     @PostMapping("/search/user/grade")
