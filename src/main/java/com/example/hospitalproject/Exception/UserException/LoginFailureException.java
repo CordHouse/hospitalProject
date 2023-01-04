@@ -1,4 +1,4 @@
 package com.example.hospitalproject.Exception.UserException;
 
-public class UserNotFoundException {
+public class LoginFailureException extends RuntimeException {
 }
