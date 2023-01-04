@@ -18,6 +18,10 @@ public class ChatBoard {
     private Long id;
     @Column(nullable = false, name = "chatTitle")
     private String title;
+
+    @Column(nullable = false)
+    private String delete;
+
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDate createDate;
 
@@ -28,5 +32,6 @@ public class ChatBoard {
 
     public ChatBoard(String title){
         this.title = title;
+        this.delete = "false";
     }
 }
