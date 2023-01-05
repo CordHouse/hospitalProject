@@ -1,5 +1,6 @@
 package com.example.hospitalproject.Advice;
 
+import com.example.hospitalproject.Exception.ChatBoard.NotFoundChatBoardException;
 import com.example.hospitalproject.Exception.UserException.LoginFailureException;
 import com.example.hospitalproject.Exception.UserException.UserNameNotFoundException;
 import com.example.hospitalproject.Response.Response;
@@ -28,5 +29,11 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response userNameNotFoundException(UserNameNotFoundException e) {
         return Response.failure(404, e.getMessage());
+    }
+
+    @ExceptionHandler(NotFoundChatBoardException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundChatBoardException(){
+        return Response.failure(400, "채팅방이 존재하지 않습니다.");
     }
 }
