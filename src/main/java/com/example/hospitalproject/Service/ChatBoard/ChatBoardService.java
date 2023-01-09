@@ -16,13 +16,13 @@ public class ChatBoardService {
 
     @Transactional
     public void createServiceCenterChatBoard(){
-        ChatBoard chatBoard = new ChatBoard(ChatTitleType.SERVICE_CENTER.name());
+        ChatBoard chatBoard = new ChatBoard(ChatTitleType.SERVICE_CENTER.name(), ChatTitleType.SERVICE_CENTER);
         chatBoardRepository.save(chatBoard);
     }
 
     @Transactional
     public void createPrivateChatBoard(){
-        ChatBoard chatBoard = new ChatBoard(ChatTitleType.PRIVATE_CHAT.name());
+        ChatBoard chatBoard = new ChatBoard(ChatTitleType.PRIVATE_CHAT.name(), ChatTitleType.PRIVATE_CHAT);
         chatBoardRepository.save(chatBoard);
     }
 
