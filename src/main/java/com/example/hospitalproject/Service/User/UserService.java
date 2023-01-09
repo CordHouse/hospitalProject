@@ -43,7 +43,7 @@ public class UserService {
                 userRegisterRequestDto.getPhone(),
                 userRegisterRequestDto.getEmail(),
                 userRegisterRequestDto.getAddress(),
-                UserGrade.ADMIN.name());
+                UserGrade.COMMON_MEMBER);
         userRepository.save(user);
         return "가입 성공";
     }
@@ -74,6 +74,6 @@ public class UserService {
     @Transactional
     public String searchUserGrade(UserGradeSearchRequestDto userGradeSearchRequestDto){
         User user = userRepository.findByUsername(userGradeSearchRequestDto.getUsername()).orElseThrow();
-        return UserGrade.findUserGrade(user.getUserGrade()).getGrade();
+        return UserGrade.findUserGrade(user.getUserGrade().toString()).getGrade();
     }
 }
