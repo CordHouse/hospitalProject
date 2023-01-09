@@ -40,8 +40,8 @@ public class User {
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
-    private String userGrade;
+    @Enumerated(EnumType.STRING)
+    private UserGrade userGrade;
 
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDate createDate;
@@ -51,7 +51,7 @@ public class User {
         this.createDate = LocalDate.now();
     }
 
-    public User(String name, String username, String password, String birthday, String phone, String email, String address, String userGrade){
+    public User(String name, String username, String password, String birthday, String phone, String email, String address, UserGrade userGrade){
         this.name = name;
         this.username = username;
         this.password = password;
