@@ -8,7 +8,7 @@ import com.example.hospitalproject.Dto.User.UserSignInRequestDto;
 import com.example.hospitalproject.Dto.User.UserSignInResponseDto;
 import com.example.hospitalproject.Entity.User.RefreshToken;
 import com.example.hospitalproject.Entity.User.User;
-import com.example.hospitalproject.Entity.User.UserGrade;
+import com.example.hospitalproject.Entity.User.RoleUserGrade;
 import com.example.hospitalproject.Exception.UserException.LoginFailureException;
 import com.example.hospitalproject.Repository.RefreshToken.RefreshTokenRepository;
 import com.example.hospitalproject.Repository.User.UserRepository;
@@ -43,7 +43,7 @@ public class UserService {
                 userRegisterRequestDto.getPhone(),
                 userRegisterRequestDto.getEmail(),
                 userRegisterRequestDto.getAddress(),
-                UserGrade.COMMON_MEMBER);
+                RoleUserGrade.ROLE_COMMON_MEMBER);
         userRepository.save(user);
         return "가입 성공";
     }
@@ -74,6 +74,6 @@ public class UserService {
     @Transactional
     public String searchUserGrade(UserGradeSearchRequestDto userGradeSearchRequestDto){
         User user = userRepository.findByUsername(userGradeSearchRequestDto.getUsername()).orElseThrow();
-        return UserGrade.findUserGrade(user.getUserGrade().toString()).getGrade();
+        return RoleUserGrade.findUserGrade(user.getRoleUserGrade().toString()).getGrade();
     }
 }

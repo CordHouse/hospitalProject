@@ -3,8 +3,6 @@ package com.example.hospitalproject.Entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -41,7 +39,7 @@ public class User {
     private String address;
 
     @Enumerated(EnumType.STRING)
-    private UserGrade userGrade;
+    private RoleUserGrade roleUserGrade;
 
     @DateTimeFormat(pattern = "yyyy-mm-dd")
     private LocalDate createDate;
@@ -51,7 +49,7 @@ public class User {
         this.createDate = LocalDate.now();
     }
 
-    public User(String name, String username, String password, String birthday, String phone, String email, String address, UserGrade userGrade){
+    public User(String name, String username, String password, String birthday, String phone, String email, String address, RoleUserGrade roleUserGrade){
         this.name = name;
         this.username = username;
         this.password = password;
@@ -59,7 +57,7 @@ public class User {
         this.phone = phone;
         this.email = email;
         this.address = address;
-        this.userGrade = userGrade;
+        this.roleUserGrade = roleUserGrade;
     }
 
 //    @ManyToOne(fetch = FetchType.LAZY)
