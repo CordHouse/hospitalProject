@@ -4,6 +4,7 @@ import com.example.hospitalproject.Config.jwt.JwtAccessDeniedHandler;
 import com.example.hospitalproject.Config.jwt.JwtAuthenticationEntryPointHandler;
 import com.example.hospitalproject.Config.jwt.JwtSecurityConfig;
 import com.example.hospitalproject.Config.jwt.TokenProvider;
+import com.example.hospitalproject.Entity.User.RoleUserGrade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,7 +40,9 @@ public class SecurityConfigure {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/home/signIn", "/home/signup").permitAll()
+                .antMatchers("/home/signIn", "/home/signup", "/chat/create/service/center").permitAll()
+                .antMatchers("/chat/create/private", "/chat/change/title/{id}", "/chat/delete/chat/{id}")
+                .hasAnyAuthority("ROLE_ADMIN","ROLE_MANAGER", "ROLE_EXCELLENT_MEMBER", "ROLE_COMMON_MEMBER")
                 .anyRequest().authenticated()
 
                 .and()
