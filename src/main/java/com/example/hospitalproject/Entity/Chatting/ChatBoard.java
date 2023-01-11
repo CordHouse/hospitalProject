@@ -22,6 +22,12 @@ public class ChatBoard {
     @Column(nullable = false, name = "doDelete")
     private String delete;
 
+    @Column(nullable = false)
+    private String sender;
+
+    @Column(nullable = false)
+    private String receiver;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "chatType")
     private ChatTitleType chatTitleType;
@@ -34,9 +40,11 @@ public class ChatBoard {
         createDate = LocalDate.now();
     }
 
-    public ChatBoard(String title, ChatTitleType chatTitleType){
+    public ChatBoard(String title, ChatTitleType chatTitleType, String receiver, String sender){
         this.title = title;
         this.chatTitleType = chatTitleType;
+        this.receiver = receiver;
+        this.sender = sender;
         this.delete = "false";
     }
 }
