@@ -40,9 +40,9 @@ public class SecurityConfigure {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/home/signIn", "/home/signup", "/chat/create/service/center").permitAll()
-                .antMatchers("/chat/create/private", "/chat/change/title/{id}", "/chat/delete/chat/{id}")
-                .hasAnyAuthority("ROLE_ADMIN","ROLE_MANAGER", "ROLE_EXCELLENT_MEMBER", "ROLE_COMMON_MEMBER")
+                .antMatchers("/home/signIn", "/home/signup").permitAll()
+                .antMatchers("/chat/**").access("hasRole(\"ADMIN\") or hasRole(\"MANAGER\") or hasRole(\"EXCELLENT_MEMBER\") or hasRole(\"COMMON_MEMBER\")")
+                .antMatchers("/chatting/**").access("hasRole(\"ADMIN\") or hasRole(\"MANAGER\") or hasRole(\"EXCELLENT_MEMBER\") or hasRole(\"COMMON_MEMBER\")")
                 .anyRequest().authenticated()
 
                 .and()
