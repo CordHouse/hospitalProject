@@ -1,5 +1,6 @@
 package com.example.hospitalproject.Controller.ChatBoard;
 
+import com.example.hospitalproject.Dto.ChatBoard.ChatBoardReceiverRequestDto;
 import com.example.hospitalproject.Dto.ChatBoard.EditPrivateTitleRequestDto;
 import com.example.hospitalproject.Service.ChatBoard.ChatBoardService;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,8 @@ public class ChatBoardRestController {
      */
     @PostMapping("/create/private")
     @ResponseStatus(HttpStatus.OK)
-    public void createPrivateChatBoard(){
-        chatBoardService.createPrivateChatBoard();
+    public void createPrivateChatBoard(@RequestBody @Valid ChatBoardReceiverRequestDto chatBoardReceiverRequestDto){
+        chatBoardService.createPrivateChatBoard(chatBoardReceiverRequestDto);
     }
 
     /**

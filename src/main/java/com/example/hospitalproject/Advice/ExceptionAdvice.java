@@ -2,7 +2,7 @@ package com.example.hospitalproject.Advice;
 
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChatBoardException;
 import com.example.hospitalproject.Exception.UserException.LoginFailureException;
-import com.example.hospitalproject.Exception.UserException.UserNameNotFoundException;
+import com.example.hospitalproject.Exception.UserException.NotFoundUsernameException;
 import com.example.hospitalproject.Response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -25,9 +25,9 @@ public class ExceptionAdvice {
         return Response.failure(404, "로그인에 실패하였습니다. 아이디 혹은 비밀번호를 다시 한 번 확인해주세요");
     }
 
-    @ExceptionHandler(UserNameNotFoundException.class)
+    @ExceptionHandler(NotFoundUsernameException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Response userNameNotFoundException(UserNameNotFoundException e) {
+    public Response userNameNotFoundException(NotFoundUsernameException e) {
         return Response.failure(404, e.getMessage());
     }
 
