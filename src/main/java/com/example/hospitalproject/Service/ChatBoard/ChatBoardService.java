@@ -4,9 +4,12 @@ import com.example.hospitalproject.Dto.ChatBoard.ChatBoardReceiverRequestDto;
 import com.example.hospitalproject.Dto.ChatBoard.EditPrivateTitleRequestDto;
 import com.example.hospitalproject.Entity.Chatting.ChatBoard;
 import com.example.hospitalproject.Entity.Chatting.ChatTitleType;
+import com.example.hospitalproject.Entity.Chatting.Chatting;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChatBoardException;
+import com.example.hospitalproject.Exception.ChatBoard.NotFoundChattingException;
 import com.example.hospitalproject.Exception.UserException.NotFoundUsernameException;
 import com.example.hospitalproject.Repository.ChatBoard.ChatBoardRepository;
+import com.example.hospitalproject.Repository.ChatBoard.ChattingRepository;
 import com.example.hospitalproject.Repository.User.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -14,10 +17,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ChatBoardService{
     private final ChatBoardRepository chatBoardRepository;
+    private final ChattingRepository chattingRepository;
     private final UserRepository userRepository;
 
     @Transactional
@@ -56,5 +62,9 @@ public class ChatBoardService{
     public void deleteChatBoard(long id){
         ChatBoard chatBoard = chatBoardRepository.findById(id).orElseThrow(NotFoundChatBoardException::new);
         chatBoard.setDelete("true");
+        List<Chatting> chatting = chattingRepository.findAllByChatBoard_Id(chatBoard.getId()).orElseThrow(() -> {
+            throw new NotFoundChattingException("채팅방에 채팅이 존재하지 않습니다.");
+        });
+        chatting.forEach(chat -> chat.setDoDelete("true"));
     }
 }
