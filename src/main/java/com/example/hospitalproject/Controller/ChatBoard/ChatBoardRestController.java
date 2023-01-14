@@ -48,7 +48,7 @@ public class ChatBoardRestController {
      * 채팅방 삭제 -> 진짜로 삭제되는 것은 아니고, 데이터 보관을 위해 true, false로 여부만 확인한다.
      * @param id
      */
-    @PostMapping("/delete/chat/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteChatBoard(@PathVariable long id){
         chatBoardService.deleteChatBoard(id);

@@ -22,6 +22,9 @@ public class Chatting {
     @Column(nullable = false, name = "text")
     private String comment;
 
+    @Column(nullable = false)
+    private String doDelete;
+
     @DateTimeFormat(pattern = "yyyy-mm-dd HH:mm:ss")
     @Column(name = "timeStamp")
     private LocalDate date;
@@ -39,5 +42,6 @@ public class Chatting {
     public Chatting(String comment, ChatBoard chatBoard){
         this.comment = comment;
         this.chatBoard = chatBoard;
+        this.doDelete = "false";
     }
 }
