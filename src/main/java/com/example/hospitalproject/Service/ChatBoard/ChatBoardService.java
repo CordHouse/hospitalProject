@@ -5,6 +5,7 @@ import com.example.hospitalproject.Dto.ChatBoard.EditPrivateTitleRequestDto;
 import com.example.hospitalproject.Entity.Chatting.ChatBoard;
 import com.example.hospitalproject.Entity.Chatting.ChatTitleType;
 import com.example.hospitalproject.Entity.Chatting.Chatting;
+import com.example.hospitalproject.Entity.User.User;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChatBoardException;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChattingException;
 import com.example.hospitalproject.Exception.UserException.NotFoundUsernameException;
@@ -32,8 +33,8 @@ public class ChatBoardService{
         ChatBoard chatBoard = new ChatBoard(
                 ChatTitleType.SERVICE_CENTER.getValue(),
                 ChatTitleType.SERVICE_CENTER,
-                ChatTitleType.SERVICE_CENTER.getValue(),
-                authentication.getName());
+                authentication.getName(),
+                ChatTitleType.SERVICE_CENTER.getValue());
 
         chatBoardRepository.save(chatBoard);
     }
@@ -47,8 +48,8 @@ public class ChatBoardService{
         ChatBoard chatBoard = new ChatBoard(
                 ChatTitleType.PRIVATE_CHAT.name(),
                 ChatTitleType.PRIVATE_CHAT,
-                chatBoardReceiverRequestDto.getReceiver(),
-                authentication.getName());
+                authentication.getName(),
+                chatBoardReceiverRequestDto.getReceiver());
         chatBoardRepository.save(chatBoard);
     }
 
@@ -60,11 +61,30 @@ public class ChatBoardService{
 
     @Transactional
     public void deleteChatBoard(long id){
-        ChatBoard chatBoard = chatBoardRepository.findById(id).orElseThrow(NotFoundChatBoardException::new);
-        chatBoard.setDelete("true");
-        List<Chatting> chatting = chattingRepository.findAllByChatBoard_Id(chatBoard.getId()).orElseThrow(() -> {
-            throw new NotFoundChattingException("채팅방에 채팅이 존재하지 않습니다.");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
+            throw new NotFoundUsernameException("유저정보가 올바르지 않습니다.");
         });
-        chatting.forEach(chat -> chat.setDoDelete("true"));
+        ChatBoard chatBoard = chatBoardRepository.findById(id).orElseThrow(NotFoundChatBoardException::new);
+        whoIsDelete(chatBoard, user.getUsername());
+        hostAndTargetDoDeleteCheck(chatBoard);
+    }
+
+    @Transactional
+    protected void whoIsDelete(ChatBoard chatBoard, String username){
+        if(chatBoard.getHost().equals(username)){
+            chatBoard.setHostDelete("true");
+        }
+        chatBoard.setTargetDelete("true");
+    }
+
+    @Transactional
+    protected void hostAndTargetDoDeleteCheck(ChatBoard chatBoard){
+        if(chatBoard.getHostDelete().equals("true") && chatBoard.getTargetDelete().equals("true")) {
+            List<Chatting> chatting = chattingRepository.findAllByChatBoard_Id(chatBoard.getId()).orElseThrow(() -> {
+                throw new NotFoundChattingException("채팅방에 채팅이 존재하지 않습니다.");
+            });
+            chatting.forEach(chat -> chat.setDoDelete("true"));
+        }
     }
 }
