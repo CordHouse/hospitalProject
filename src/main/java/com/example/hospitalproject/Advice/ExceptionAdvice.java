@@ -2,6 +2,7 @@ package com.example.hospitalproject.Advice;
 
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChatBoardException;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChattingException;
+import com.example.hospitalproject.Exception.ChatBoard.NotMatchSenderDeleteException;
 import com.example.hospitalproject.Exception.UserException.LoginFailureException;
 import com.example.hospitalproject.Exception.UserException.NotFoundUsernameException;
 import com.example.hospitalproject.Response.Response;
@@ -42,5 +43,11 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response notFoundChattingException(NotFoundChattingException e) {
         return Response.failure(404, e.getMessage());
+    }
+
+    @ExceptionHandler(NotMatchSenderDeleteException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notMatchSenderDeleteException() {
+        return Response.failure(404, "송신자만 삭제 할 수 있습니다.");
     }
 }
