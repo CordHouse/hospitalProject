@@ -13,12 +13,12 @@ import java.time.LocalDate;
 public class ChattingListResponseDto {
     private Long id;
     private String chatTitle;
-    private String sender;
-    private String receiver;
+    private String host;
+    private String target;
     private String chattingType;
     private LocalDate createDate;
 
     public ChattingListResponseDto toDo(ChatBoard chatBoard){
-        return new ChattingListResponseDto(chatBoard.getId(), chatBoard.getTitle(), chatBoard.getSender(), chatBoard.getReceiver(), chatBoard.getChatTitleType().toString(), chatBoard.getCreateDate());
+        return new ChattingListResponseDto(chatBoard.getId(), chatBoard.getTitle(), chatBoard.getHost(), chatBoard.getTarget(), chatBoard.getChatTitleType().toString(), chatBoard.getCreateDate());
     }
 }
