@@ -21,10 +21,10 @@ public class ChattingRestController {
         chattingService.chatRunStatus(id, chattingCommentRequestDto);
     }
 
-    @GetMapping("/my/info")
+    @GetMapping("/{id}/comment")
     @ResponseStatus(HttpStatus.OK)
-    private Response getMyChattingList(){
-        return Response.success(chattingService.getMyChattingList());
+    private Response getMyChattingList(@PathVariable long id){
+        return Response.success(chattingService.getMyChattingList(id));
     }
 
     @DeleteMapping("/{id}")
