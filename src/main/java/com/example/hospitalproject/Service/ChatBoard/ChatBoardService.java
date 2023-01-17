@@ -28,10 +28,10 @@ public class ChatBoardService{
     private final ChatBoardRepository chatBoardRepository;
     private final ChattingRepository chattingRepository;
     private final UserRepository userRepository;
-    private final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     @Transactional
     public void createServiceCenterChatBoard(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ChatBoard chatBoard = new ChatBoard(
                 ChatTitleType.SERVICE_CENTER.getValue(),
                 ChatTitleType.SERVICE_CENTER,
@@ -43,6 +43,7 @@ public class ChatBoardService{
 
     @Transactional
     public void createPrivateChatBoard(ChatBoardReceiverRequestDto chatBoardReceiverRequestDto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         userRepository.findByUsername(chatBoardReceiverRequestDto.getReceiver()).orElseThrow(() -> {
             throw new NotFoundUsernameException("해당 아이디는 회원 계정이 아닙니다.");
         });
@@ -62,6 +63,7 @@ public class ChatBoardService{
 
     @Transactional(readOnly = true)
     public List<ChatBoardListResponseDto> getMyChatBoardList(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<ChatBoard> chatBoards = chatBoardRepository.findAllByHostOrTarget(authentication.getName(), authentication.getName()).orElseThrow(() -> {
             throw new NotFoundChatBoardException();
         });
@@ -72,6 +74,7 @@ public class ChatBoardService{
 
     @Transactional
     public void deleteChatBoard(long id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
             throw new NotFoundUsernameException("유저정보가 올바르지 않습니다.");
         });
