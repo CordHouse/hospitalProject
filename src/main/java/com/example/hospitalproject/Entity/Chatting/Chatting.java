@@ -8,7 +8,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -23,15 +23,21 @@ public class Chatting {
     private String comment;
 
     @Column(nullable = false)
+    private String sender;
+
+    @Column(nullable = false)
+    private String receiver;
+
+    @Column(nullable = false)
     private String doDelete;
 
     @DateTimeFormat(pattern = "yyyy-mm-dd HH:mm:ss")
     @Column(name = "timeStamp")
-    private LocalDate date;
+    private LocalDateTime date;
 
     @PrePersist
     private void createDate(){
-        date = LocalDate.now();
+        date = LocalDateTime.now();
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,9 +45,11 @@ public class Chatting {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ChatBoard chatBoard;
 
-    public Chatting(String comment, ChatBoard chatBoard){
+    public Chatting(String comment, ChatBoard chatBoard, String sender, String receiver){
         this.comment = comment;
         this.chatBoard = chatBoard;
+        this.sender = sender;
+        this.receiver = receiver;
         this.doDelete = "false";
     }
 }

@@ -19,14 +19,17 @@ public class ChatBoard {
     @Column(nullable = false, name = "chatTitle")
     private String title;
 
-    @Column(nullable = false, name = "doDelete")
-    private String delete;
+    @Column(nullable = false, name = "doHostDelete")
+    private String hostDelete;
+
+    @Column(nullable = false, name = "doTargetDelete")
+    private String targetDelete;
 
     @Column(nullable = false)
-    private String sender;
+    private String host;
 
     @Column(nullable = false)
-    private String receiver;
+    private String target;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "chatType")
@@ -40,11 +43,12 @@ public class ChatBoard {
         createDate = LocalDate.now();
     }
 
-    public ChatBoard(String title, ChatTitleType chatTitleType, String receiver, String sender){
+    public ChatBoard(String title, ChatTitleType chatTitleType, String host, String target){
         this.title = title;
         this.chatTitleType = chatTitleType;
-        this.receiver = receiver;
-        this.sender = sender;
-        this.delete = "false";
+        this.host = host;
+        this.target = target;
+        this.hostDelete = "false";
+        this.targetDelete = "false";
     }
 }

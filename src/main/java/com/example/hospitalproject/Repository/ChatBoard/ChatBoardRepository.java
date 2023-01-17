@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface ChatBoardRepository extends JpaRepository<ChatBoard, Long> {
-    Optional<List<ChatBoard>> findAllBySenderOrReceiver(String sender, String receiver);
+    Optional<List<ChatBoard>> findAllByHostOrTarget(String Host, String Target);
 }
