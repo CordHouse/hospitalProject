@@ -1,10 +1,12 @@
 package com.example.hospitalproject.Service.ChatBoard;
 
 import com.example.hospitalproject.Dto.ChatBoard.ChattingCommentRequestDto;
-import com.example.hospitalproject.Dto.ChatBoard.ChattingListResponseDto;
+import com.example.hospitalproject.Dto.ChatBoard.ChatBoardListResponseDto;
+import com.example.hospitalproject.Dto.ChatBoard.ChattingCommentResponseDto;
 import com.example.hospitalproject.Entity.Chatting.ChatBoard;
 import com.example.hospitalproject.Entity.Chatting.Chatting;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChatBoardException;
+import com.example.hospitalproject.Exception.ChatBoard.NotFoundChattingException;
 import com.example.hospitalproject.Exception.ChatBoard.NotMatchSenderDeleteException;
 import com.example.hospitalproject.Repository.ChatBoard.ChatBoardRepository;
 import com.example.hospitalproject.Repository.ChatBoard.ChattingRepository;
@@ -22,10 +24,10 @@ import java.util.List;
 public class ChattingService {
     private final ChattingRepository chattingRepository;
     private final ChatBoardRepository chatBoardRepository;
+    private final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     @Transactional
     public void chatRunStatus(Long id, ChattingCommentRequestDto chattingCommentRequestDto){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ChatBoard chatBoard = chatBoardRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundChatBoardException();
         });
@@ -39,19 +41,17 @@ public class ChattingService {
     }
 
     @Transactional(readOnly = true)
-    public List<ChattingListResponseDto> getMyChattingList(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        List<ChatBoard> chatBoards = chatBoardRepository.findAllByHostOrTarget(authentication.getName(), authentication.getName()).orElseThrow(() -> {
-            throw new NotFoundChatBoardException();
+    public List<ChattingCommentResponseDto> getMyChattingList(long id){
+        List<Chatting> chatting = chattingRepository.findAllByChatBoard_Id(id).orElseThrow(() -> {
+            throw new NotFoundChattingException("채팅방이 존재하지 않습니다.");
         });
-        List<ChattingListResponseDto> myChattingList = new LinkedList<>();
-        chatBoards.forEach(board -> myChattingList.add(new ChattingListResponseDto().toDo(board)));
-        return myChattingList;
+        List<ChattingCommentResponseDto> chattingCommentList = new LinkedList<>();
+        chatting.forEach(chat -> chattingCommentList.add(new ChattingCommentResponseDto().toDo(chat)));
+        return chattingCommentList;
     }
 
     @Transactional
     public void chatDelete(long id){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Chatting chatting = chattingRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundChatBoardException();
         });
