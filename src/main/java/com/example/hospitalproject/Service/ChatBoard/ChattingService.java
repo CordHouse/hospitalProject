@@ -1,7 +1,6 @@
 package com.example.hospitalproject.Service.ChatBoard;
 
 import com.example.hospitalproject.Dto.ChatBoard.ChattingCommentRequestDto;
-import com.example.hospitalproject.Dto.ChatBoard.ChatBoardListResponseDto;
 import com.example.hospitalproject.Dto.ChatBoard.ChattingCommentResponseDto;
 import com.example.hospitalproject.Entity.Chatting.ChatBoard;
 import com.example.hospitalproject.Entity.Chatting.Chatting;
@@ -24,10 +23,10 @@ import java.util.List;
 public class ChattingService {
     private final ChattingRepository chattingRepository;
     private final ChatBoardRepository chatBoardRepository;
-    private final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     @Transactional
     public void chatRunStatus(Long id, ChattingCommentRequestDto chattingCommentRequestDto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ChatBoard chatBoard = chatBoardRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundChatBoardException();
         });
@@ -52,6 +51,7 @@ public class ChattingService {
 
     @Transactional
     public void chatDelete(long id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Chatting chatting = chattingRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundChatBoardException();
         });
