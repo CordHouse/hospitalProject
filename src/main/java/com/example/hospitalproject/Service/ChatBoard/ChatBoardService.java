@@ -1,6 +1,7 @@
 package com.example.hospitalproject.Service.ChatBoard;
 
 import com.example.hospitalproject.Dto.ChatBoard.ChatBoardReceiverRequestDto;
+import com.example.hospitalproject.Dto.ChatBoard.ChatBoardListResponseDto;
 import com.example.hospitalproject.Dto.ChatBoard.EditPrivateTitleRequestDto;
 import com.example.hospitalproject.Entity.Chatting.ChatBoard;
 import com.example.hospitalproject.Entity.Chatting.ChatTitleType;
@@ -18,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -41,10 +43,10 @@ public class ChatBoardService{
 
     @Transactional
     public void createPrivateChatBoard(ChatBoardReceiverRequestDto chatBoardReceiverRequestDto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         userRepository.findByUsername(chatBoardReceiverRequestDto.getReceiver()).orElseThrow(() -> {
             throw new NotFoundUsernameException("해당 아이디는 회원 계정이 아닙니다.");
         });
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         ChatBoard chatBoard = new ChatBoard(
                 ChatTitleType.PRIVATE_CHAT.name(),
                 ChatTitleType.PRIVATE_CHAT,
@@ -57,6 +59,17 @@ public class ChatBoardService{
     public void editPrivateTitle(EditPrivateTitleRequestDto editPrivateTitleRequestDto, long id){
         ChatBoard chatBoard = chatBoardRepository.findById(id).orElseThrow(NotFoundChatBoardException::new);
         chatBoard.setTitle(editPrivateTitleRequestDto.getChangeTitle());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChatBoardListResponseDto> getMyChatBoardList(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        List<ChatBoard> chatBoards = chatBoardRepository.findAllByHostOrTarget(authentication.getName(), authentication.getName()).orElseThrow(() -> {
+            throw new NotFoundChatBoardException();
+        });
+        List<ChatBoardListResponseDto> myChatBoardList = new LinkedList<>();
+        chatBoards.forEach(board -> myChatBoardList.add(new ChatBoardListResponseDto().toDo(board)));
+        return myChatBoardList;
     }
 
     @Transactional

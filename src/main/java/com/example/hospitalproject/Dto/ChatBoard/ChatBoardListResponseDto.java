@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChattingListResponseDto {
+public class ChatBoardListResponseDto {
     private Long id;
     private String chatTitle;
     private String host;
@@ -18,7 +18,7 @@ public class ChattingListResponseDto {
     private String chattingType;
     private LocalDate createDate;
 
-    public ChattingListResponseDto toDo(ChatBoard chatBoard){
-        return new ChattingListResponseDto(chatBoard.getId(), chatBoard.getTitle(), chatBoard.getHost(), chatBoard.getTarget(), chatBoard.getChatTitleType().toString(), chatBoard.getCreateDate());
+    public ChatBoardListResponseDto toDo(ChatBoard chatBoard){
+        return new ChatBoardListResponseDto(chatBoard.getId(), chatBoard.getTitle(), chatBoard.getHost(), chatBoard.getTarget(), chatBoard.getChatTitleType().toString(), chatBoard.getCreateDate());
     }
 }
