@@ -1,6 +1,7 @@
 package com.example.hospitalproject.Controller.Board;
 
 import com.example.hospitalproject.Dto.Board.BoardCreateRequestDto;
+import com.example.hospitalproject.Response.Response;
 import com.example.hospitalproject.Service.Board.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ public class BoardRestController {
 
     @PostMapping("/board")
     @ResponseStatus(HttpStatus.OK)
-    public void create(@RequestBody @Valid BoardCreateRequestDto boardCreateRequestDto){
-        boardService.create(boardCreateRequestDto);
+    public Response create(@RequestBody @Valid BoardCreateRequestDto boardCreateRequestDto){
+        return Response.success();
     }
 }
