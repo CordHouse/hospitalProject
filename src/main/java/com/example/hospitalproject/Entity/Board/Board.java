@@ -4,7 +4,7 @@ import com.example.hospitalproject.Entity.User.RoleUserGrade;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -12,7 +12,6 @@ import javax.persistence.*;
 @Data // getter, setter
 @AllArgsConstructor // 매개변수가 다 들어가는 생성자
 @NoArgsConstructor // 매개변수가 없는 생성자
-@DynamicInsert
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,12 +26,13 @@ public class Board {
     @Column(nullable = false, name = "writer")
     private String writer;
 
-    @Column(name = "viewCount", columnDefinition = "integer default 0")
-    private Integer viewCount;
+    @ColumnDefault("0")
+    private Long viewCount;
 
     @Enumerated(EnumType.STRING)
     private RoleUserGrade roleUserGrade;
 
-    @Column(columnDefinition = "BOOLEAN DEFAULT false")
-    private boolean deleted;
+    @Column(columnDefinition="BOOLEAN DEFAULT false")
+    private boolean delete;
+
 }
