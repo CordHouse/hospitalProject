@@ -31,12 +31,10 @@ public class ChattingService {
             throw new NotFoundChatBoardException();
         });
         if(authentication.getName().equals(chatBoard.getHost())) {
-            Chatting chatting = new Chatting(chattingCommentRequestDto.getComment(), chatBoard, chatBoard.getHost(), chatBoard.getTarget());
-            chattingRepository.save(chatting);
+            chattingRepository.save(new Chatting(chattingCommentRequestDto.getComment(), chatBoard, chatBoard.getHost(), chatBoard.getTarget()));
             return ;
         }
-        Chatting chatting = new Chatting(chattingCommentRequestDto.getComment(), chatBoard, chatBoard.getTarget(), chatBoard.getHost());
-        chattingRepository.save(chatting);
+        chattingRepository.save(new Chatting(chattingCommentRequestDto.getComment(), chatBoard, chatBoard.getTarget(), chatBoard.getHost()));
     }
 
     @Transactional(readOnly = true)
