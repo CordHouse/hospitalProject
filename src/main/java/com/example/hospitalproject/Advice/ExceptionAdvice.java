@@ -1,5 +1,7 @@
 package com.example.hospitalproject.Advice;
 
+import com.example.hospitalproject.Exception.Payment.DuplicateCardInfoException;
+import com.example.hospitalproject.Exception.Payment.NotFoundBankException;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChatBoardException;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChattingException;
 import com.example.hospitalproject.Exception.ChatBoard.NotMatchSenderDeleteException;
@@ -49,5 +51,17 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response notMatchSenderDeleteException() {
         return Response.failure(404, "송신자만 삭제 할 수 있습니다.");
+    }
+
+    @ExceptionHandler(NotFoundBankException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundBankException() {
+        return Response.failure(404, "존재하지 않는 은행입니다.");
+    }
+
+    @ExceptionHandler(DuplicateCardInfoException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response duplicateCardInfoException() {
+        return Response.failure(404, "이미 등록된 카드입니다.");
     }
 }
