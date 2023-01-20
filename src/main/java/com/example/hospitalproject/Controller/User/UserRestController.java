@@ -1,5 +1,6 @@
 package com.example.hospitalproject.Controller.User;
 
+import com.example.hospitalproject.Dto.Token.TokenReIssueDto;
 import com.example.hospitalproject.Dto.User.UserRegisterRequestDto;
 import com.example.hospitalproject.Dto.User.UserGradeSearchRequestDto;
 import com.example.hospitalproject.Dto.User.UserSignInRequestDto;
@@ -26,6 +27,12 @@ public class UserRestController {
     @ResponseStatus(HttpStatus.OK)
     public Response signIn(@RequestBody @Valid UserSignInRequestDto requestDto) {
         return Response.success(userService.signIn(requestDto));
+    }
+
+    @PostMapping("/reIssue")
+    @ResponseStatus(HttpStatus.OK)
+    public Response reIssue(@RequestBody @Valid TokenReIssueDto reIssueDto) {
+        return Response.success(userService.reIssue(reIssueDto));
     }
 
     @PostMapping("/search/user/grade")
