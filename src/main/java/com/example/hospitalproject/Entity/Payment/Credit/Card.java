@@ -1,8 +1,11 @@
 package com.example.hospitalproject.Entity.Payment.Credit;
 
+import com.example.hospitalproject.Entity.User.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -17,7 +20,12 @@ public class Card {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(nullable = false, name = "bank")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User user;
+
+    @Column(nullable = false)
     private String bank;
 
     @Column(nullable = false)
@@ -39,7 +47,8 @@ public class Card {
         this.localDateTime = LocalDateTime.now();
     }
 
-    public Card(String bank, String cardNumber, String validYear, String validMonth, String password){
+    public Card(User user, String bank, String cardNumber, String validYear, String validMonth, String password){
+        this.user = user;
         this.bank = bank;
         this.cardNumber = cardNumber;
         this.validYear = validYear;
