@@ -49,6 +49,15 @@ public class Payment {
     @DateTimeFormat(pattern = "yyyy-mm-dd HH:mm:ss")
     private LocalDateTime approvalDate;
 
+    @Column
+    private String approvalStatus;
+
+    @DateTimeFormat(pattern = "yyyy-mm-dd HH:mm:ss")
+    private LocalDateTime approvalStatusDate;
+
+    @Column(name = "administer")
+    private String adminName;
+
     @PrePersist
     public void approvalDate(){
         this.approvalDate = LocalDateTime.now();
