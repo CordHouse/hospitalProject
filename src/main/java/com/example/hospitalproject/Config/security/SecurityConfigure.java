@@ -44,6 +44,7 @@ public class SecurityConfigure {
                 .antMatchers("/chat/**").access("hasRole(\"ADMIN\") or hasRole(\"MANAGER\") or hasRole(\"EXCELLENT_MEMBER\") or hasRole(\"COMMON_MEMBER\")")
                 .antMatchers("/chatting/**").access("hasRole(\"ADMIN\") or hasRole(\"MANAGER\") or hasRole(\"EXCELLENT_MEMBER\") or hasRole(\"COMMON_MEMBER\")")
                 .antMatchers("/payment/common/**").access("hasRole(\"ADMIN\") or hasRole(\"MANAGER\") or hasRole(\"EXCELLENT_MEMBER\") or hasRole(\"COMMON_MEMBER\")")
+                .antMatchers("/payment/card/**").access("hasRole(\"ADMIN\") or hasRole(\"MANAGER\") or hasRole(\"EXCELLENT_MEMBER\") or hasRole(\"COMMON_MEMBER\")")
                 .antMatchers("/payment/manager/**").access("hasRole(\"ADMIN\") or hasRole(\"MANAGER\")")
                 .anyRequest().authenticated()
 
