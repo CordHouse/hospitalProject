@@ -1,5 +1,6 @@
 package com.example.hospitalproject.Advice;
 
+import com.example.hospitalproject.Exception.Payment.PayCancelException;
 import com.example.hospitalproject.Exception.Payment.DuplicateCardInfoException;
 import com.example.hospitalproject.Exception.Payment.NotFoundBankException;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChatBoardException;
@@ -70,5 +71,11 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response notFoundPayTypeException() {
         return Response.failure(404, "결제 타입이 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(PayCancelException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response payCancelException(PayCancelException e) {
+        return Response.failure(404, e.getMessage());
     }
 }
