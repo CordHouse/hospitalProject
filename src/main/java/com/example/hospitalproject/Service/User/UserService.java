@@ -2,6 +2,7 @@ package com.example.hospitalproject.Service.User;
 
 import com.example.hospitalproject.Config.jwt.TokenProvider;
 import com.example.hospitalproject.Dto.Token.RefreshTokenDto;
+import com.example.hospitalproject.Dto.Token.TokenReIssueDto;
 import com.example.hospitalproject.Dto.User.UserGradeSearchRequestDto;
 import com.example.hospitalproject.Dto.User.UserRegisterRequestDto;
 import com.example.hospitalproject.Dto.User.UserSignInRequestDto;
@@ -9,6 +10,7 @@ import com.example.hospitalproject.Dto.User.UserSignInResponseDto;
 import com.example.hospitalproject.Entity.User.RefreshToken;
 import com.example.hospitalproject.Entity.User.User;
 import com.example.hospitalproject.Entity.User.RoleUserGrade;
+import com.example.hospitalproject.Exception.RefreshToken.NotFoundRefreshTokenException;
 import com.example.hospitalproject.Exception.UserException.LoginFailureException;
 import com.example.hospitalproject.Repository.RefreshToken.RefreshTokenRepository;
 import com.example.hospitalproject.Repository.User.UserRepository;
@@ -69,6 +71,21 @@ public class UserService {
         refreshTokenRepository.save(refreshToken);
 
         return new UserSignInResponseDto(createdToken.getOriginToken(), createdToken.getRefreshToken());
+    }
+
+    @Transactional
+    public TokenReIssueDto reIssue(TokenReIssueDto reIssueDto) {
+        Authentication authentication = tokenProvider.getAuthentication(reIssueDto.getOriginToken());
+
+        if(!refreshTokenRepository.existsRefreshTokenById(authentication.getName()))
+            throw new NotFoundRefreshTokenException();
+
+        RefreshTokenDto refreshTokenDto = tokenProvider.createToken(authentication);
+
+        return TokenReIssueDto.builder()
+                .originToken(refreshTokenDto.getOriginToken())
+                .refreshToken(refreshTokenDto.getRefreshToken())
+                .build();
     }
 
     @Transactional

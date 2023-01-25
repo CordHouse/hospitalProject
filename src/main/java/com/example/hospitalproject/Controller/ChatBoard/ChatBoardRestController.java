@@ -2,6 +2,7 @@ package com.example.hospitalproject.Controller.ChatBoard;
 
 import com.example.hospitalproject.Dto.ChatBoard.ChatBoardReceiverRequestDto;
 import com.example.hospitalproject.Dto.ChatBoard.EditPrivateTitleRequestDto;
+import com.example.hospitalproject.Response.Response;
 import com.example.hospitalproject.Service.ChatBoard.ChatBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -42,6 +43,16 @@ public class ChatBoardRestController {
     @ResponseStatus(HttpStatus.OK)
     public void editPrivateTitle(@RequestBody @Valid EditPrivateTitleRequestDto editPrivateTitleRequestDto, @PathVariable long id){
         chatBoardService.editPrivateTitle(editPrivateTitleRequestDto, id);
+    }
+
+    /**
+     * 채팅방 목록 가져오기
+     * @return
+     */
+    @GetMapping("/my")
+    @ResponseStatus(HttpStatus.OK)
+    private Response getMyChatBoardList(){
+        return Response.success(chatBoardService.getMyChatBoardList());
     }
 
     /**

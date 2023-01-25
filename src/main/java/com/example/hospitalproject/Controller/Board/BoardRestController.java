@@ -17,14 +17,14 @@ public class BoardRestController {
 
     @PostMapping("/board")
     @ResponseStatus(HttpStatus.OK)
-    public Response create(@RequestBody @Valid BoardCreateRequestDto boardCreateRequestDto){
-        return Response.success();
+    public void create(@RequestBody @Valid BoardCreateRequestDto boardCreateRequestDto){
+        boardService.create(boardCreateRequestDto);
     }
 
     @DeleteMapping("/board/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Response delete(@PathVariable Long id){
-        return Response.success();
+    public void delete(@PathVariable Long id){
+        boardService.delete(id);
     }
 
 
