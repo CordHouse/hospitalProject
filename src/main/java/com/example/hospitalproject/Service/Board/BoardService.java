@@ -3,6 +3,7 @@ package com.example.hospitalproject.Service.Board;
 import com.example.hospitalproject.Dto.Board.BoardCreateRequestDto;
 import com.example.hospitalproject.Entity.Board.Board;
 import com.example.hospitalproject.Entity.User.RoleUserGrade;
+import com.example.hospitalproject.Exception.Board.NotFoundBoardException;
 import com.example.hospitalproject.Repository.Board.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -31,4 +32,11 @@ public class BoardService {
 
         boardRepository.save(board);
     }
+
+    @Transactional
+    public void delete(Long id){
+        boardRepository.findById(id).orElseThrow(NotFoundBoardException::new);
+        boardRepository.deleteById(id);
+    }
+
 }

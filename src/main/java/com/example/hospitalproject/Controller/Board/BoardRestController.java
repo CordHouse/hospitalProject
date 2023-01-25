@@ -1,6 +1,7 @@
 package com.example.hospitalproject.Controller.Board;
 
 import com.example.hospitalproject.Dto.Board.BoardCreateRequestDto;
+import com.example.hospitalproject.Response.Response;
 import com.example.hospitalproject.Service.Board.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,4 +20,12 @@ public class BoardRestController {
     public void create(@RequestBody @Valid BoardCreateRequestDto boardCreateRequestDto){
         boardService.create(boardCreateRequestDto);
     }
+
+    @DeleteMapping("/board/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable Long id){
+        boardService.delete(id);
+    }
+
+
 }
