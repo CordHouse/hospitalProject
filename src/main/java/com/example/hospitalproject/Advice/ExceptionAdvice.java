@@ -7,6 +7,7 @@ import com.example.hospitalproject.Exception.ChatBoard.NotFoundChatBoardExceptio
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChattingException;
 import com.example.hospitalproject.Exception.ChatBoard.NotMatchSenderDeleteException;
 import com.example.hospitalproject.Exception.Payment.NotFoundPayTypeException;
+import com.example.hospitalproject.Exception.RefreshToken.NotFoundRefreshTokenException;
 import com.example.hospitalproject.Exception.UserException.LoginFailureException;
 import com.example.hospitalproject.Exception.UserException.NotFoundUsernameException;
 import com.example.hospitalproject.Response.Response;
@@ -29,6 +30,12 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response loginFailureException() {
         return Response.failure(404, "로그인에 실패하였습니다. 아이디 혹은 비밀번호를 다시 한 번 확인해주세요");
+    }
+
+    @ExceptionHandler(NotFoundRefreshTokenException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundRefreshTokenException() {
+        return Response.failure(404, "해당 사용자의 정보와 일치하는 토큰을 찾지 못하였습니다.");
     }
 
     @ExceptionHandler(NotFoundUsernameException.class)
