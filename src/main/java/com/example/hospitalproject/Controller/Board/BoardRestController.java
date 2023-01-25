@@ -20,4 +20,12 @@ public class BoardRestController {
     public Response create(@RequestBody @Valid BoardCreateRequestDto boardCreateRequestDto){
         return Response.success();
     }
+
+    @DeleteMapping("/board/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response delete(@PathVariable Long id){
+        return Response.success();
+    }
+
+
 }
