@@ -5,8 +5,12 @@ import com.example.hospitalproject.Entity.Payment.Credit.BankType;
 import com.example.hospitalproject.Entity.Payment.Credit.Card;
 import com.example.hospitalproject.Exception.Payment.DuplicateCardInfoException;
 import com.example.hospitalproject.Exception.Payment.NotFoundBankException;
+import com.example.hospitalproject.Exception.UserException.NotFoundUsernameException;
 import com.example.hospitalproject.Repository.Payment.Card.CardRepository;
+import com.example.hospitalproject.Repository.User.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CardService {
     private final CardRepository cardRepository;
+    private final UserRepository userRepository;
 
     /**
      * 카드 등록하기
@@ -23,9 +28,14 @@ public class CardService {
      */
     @Transactional
     public void cardRegistration(CardInfoRequestDto cardInfoRequestDto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         bankTypeCheck(cardInfoRequestDto.getBank());
         cardInfoMatchCheck(cardInfoRequestDto);
-        Card card = new Card(cardInfoRequestDto.getBank(),
+        Card card = new Card(
+                userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
+                    throw new NotFoundUsernameException("해당 아이디가 존재하지 않습니다.");
+                }),
+                cardInfoRequestDto.getBank(),
                 cardInfoRequestDto.getCardNumber(),
                 cardInfoRequestDto.getValidYear(),
                 cardInfoRequestDto.getValidMonth(),

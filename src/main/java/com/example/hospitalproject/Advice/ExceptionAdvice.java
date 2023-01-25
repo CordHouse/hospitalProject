@@ -1,10 +1,12 @@
 package com.example.hospitalproject.Advice;
 
+import com.example.hospitalproject.Exception.Payment.PayCancelException;
 import com.example.hospitalproject.Exception.Payment.DuplicateCardInfoException;
 import com.example.hospitalproject.Exception.Payment.NotFoundBankException;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChatBoardException;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChattingException;
 import com.example.hospitalproject.Exception.ChatBoard.NotMatchSenderDeleteException;
+import com.example.hospitalproject.Exception.Payment.NotFoundPayTypeException;
 import com.example.hospitalproject.Exception.RefreshToken.NotFoundRefreshTokenException;
 import com.example.hospitalproject.Exception.UserException.LoginFailureException;
 import com.example.hospitalproject.Exception.UserException.NotFoundUsernameException;
@@ -42,12 +44,6 @@ public class ExceptionAdvice {
         return Response.failure(404, e.getMessage());
     }
 
-    @ExceptionHandler(NotFoundRefreshTokenException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Response notFoundRefreshTokenException() {
-        return Response.failure(404, "해당 사용자의 정보와 일치하는 토큰을 찾지 못하였습니다.");
-    }
-
     @ExceptionHandler(NotFoundChatBoardException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response notFoundChatBoardException(){
@@ -76,5 +72,17 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response duplicateCardInfoException() {
         return Response.failure(404, "이미 등록된 카드입니다.");
+    }
+
+    @ExceptionHandler(NotFoundPayTypeException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundPayTypeException() {
+        return Response.failure(404, "결제 타입이 존재하지 않습니다.");
+    }
+
+    @ExceptionHandler(PayCancelException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response payCancelException(PayCancelException e) {
+        return Response.failure(404, e.getMessage());
     }
 }
