@@ -10,13 +10,13 @@ import javax.validation.Valid;
 
 @RestController             //json 형식
 @RequiredArgsConstructor    //필요한 생성자
-@RequestMapping("/comment")
+@RequestMapping("/comment") //공통으로 다 가져가는 Mapping주소 (필수x)
 public class CommentRestController {
     private final CommentService commentService;
 
-    @PostMapping("/create")
+    @PostMapping("/create/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void commentCreate(@RequestBody @Valid CommentCreateRequestDto commentCreateRequestDto){
-        commentService.commentCreate(commentCreateRequestDto);  //(@RequestBody)json데이터가 검증단계를 거치고 service로 넘어감
+    public void commentCreate(@RequestBody @Valid CommentCreateRequestDto commentCreateRequestDto, @PathVariable long id){
+        commentService.commentCreate(commentCreateRequestDto, id);  //(@RequestBody)json데이터가 검증단계를 거치고 service로 넘어감
     }
 }
