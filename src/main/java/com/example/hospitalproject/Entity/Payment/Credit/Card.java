@@ -47,12 +47,16 @@ public class Card {
         this.localDateTime = LocalDateTime.now();
     }
 
-    public Card(User user, String bank, String cardNumber, String validYear, String validMonth, String password){
+    @Column(nullable = false, name = "choice")
+    private String selectCard;
+
+    public Card(User user, String bank, String cardNumber, String validYear, String validMonth, String password, String selectCard){
         this.user = user;
         this.bank = bank;
         this.cardNumber = cardNumber;
         this.validYear = validYear;
         this.validMonth = validMonth;
         this.password = password;
+        this.selectCard = selectCard;
     }
 }
