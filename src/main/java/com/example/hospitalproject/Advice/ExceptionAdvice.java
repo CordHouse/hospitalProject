@@ -4,10 +4,10 @@ import com.example.hospitalproject.Exception.Comment.NotFoundCommentIdException;
 import com.example.hospitalproject.Exception.Payment.PayCancelException;
 import com.example.hospitalproject.Exception.Payment.DuplicateCardInfoException;
 import com.example.hospitalproject.Exception.Payment.NotFoundBankException;
+import com.example.hospitalproject.Exception.Payment.*;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChatBoardException;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChattingException;
 import com.example.hospitalproject.Exception.ChatBoard.NotMatchSenderDeleteException;
-import com.example.hospitalproject.Exception.Payment.NotFoundPayTypeException;
 import com.example.hospitalproject.Exception.RefreshToken.NotFoundRefreshTokenException;
 import com.example.hospitalproject.Exception.UserException.LoginFailureException;
 import com.example.hospitalproject.Exception.UserException.NotFoundUsernameException;
@@ -93,4 +93,16 @@ public class ExceptionAdvice {
         return Response.failure(404, "해당 댓글이 존재하지 않습니다.");
     }
 
+
+    @ExceptionHandler(NotFoundCardException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundCardException(NotFoundCardException e) {
+        return Response.failure(404, e.getMessage());
+    }
+
+    @ExceptionHandler(NotFoundCardListException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundCardListException() {
+        return Response.failure(404, "해당 계정은 등록된 카드가 없습니다.");
+    }
 }
