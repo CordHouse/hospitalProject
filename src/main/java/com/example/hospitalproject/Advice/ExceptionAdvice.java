@@ -2,9 +2,11 @@ package com.example.hospitalproject.Advice;
 
 import com.example.hospitalproject.Exception.Board.NotFoundBoardException;
 import com.example.hospitalproject.Exception.Board.UserNameDifferentException;
+import com.example.hospitalproject.Exception.Comment.NotFoundCommentIdException;
 import com.example.hospitalproject.Exception.Payment.PayCancelException;
 import com.example.hospitalproject.Exception.Payment.DuplicateCardInfoException;
 import com.example.hospitalproject.Exception.Payment.NotFoundBankException;
+import com.example.hospitalproject.Exception.Payment.*;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChatBoardException;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChattingException;
 import com.example.hospitalproject.Exception.ChatBoard.NotMatchSenderDeleteException;
@@ -98,5 +100,30 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Response userNameDifferentException(){
         return Response.failure(400, "게시글의 작성자가 아닙니다.");
+    }
+
+    @ExceptionHandler(NotFoundCommentIdException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundCommentIdException() {
+        return Response.failure(404, "해당 댓글이 존재하지 않습니다.");
+    }
+
+
+    @ExceptionHandler(NotFoundCardException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundCardException(NotFoundCardException e) {
+        return Response.failure(404, e.getMessage());
+    }
+
+    @ExceptionHandler(NotFoundCardListException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundCardListException() {
+        return Response.failure(404, "해당 계정은 등록된 카드가 없습니다.");
+    }
+
+    @ExceptionHandler(NotFoundCardChoiceException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundCardChoiceException() {
+        return Response.failure(404, "선택된 카드가 없습니다.");
     }
 }
