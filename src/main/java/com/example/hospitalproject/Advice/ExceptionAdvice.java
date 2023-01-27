@@ -1,5 +1,7 @@
 package com.example.hospitalproject.Advice;
 
+import com.example.hospitalproject.Exception.Board.NotFoundBoardException;
+import com.example.hospitalproject.Exception.Board.UserNameDifferentException;
 import com.example.hospitalproject.Exception.Payment.PayCancelException;
 import com.example.hospitalproject.Exception.Payment.DuplicateCardInfoException;
 import com.example.hospitalproject.Exception.Payment.NotFoundBankException;
@@ -84,5 +86,17 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response payCancelException(PayCancelException e) {
         return Response.failure(404, e.getMessage());
+    }
+
+    @ExceptionHandler(NotFoundBoardException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundBoardException(){
+        return Response.failure(404, "존재하지 않는 게시글입니다.");
+    }
+
+    @ExceptionHandler(UserNameDifferentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response userNameDifferentException(){
+        return Response.failure(400, "게시글의 작성자가 아닙니다.");
     }
 }
