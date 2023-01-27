@@ -1,5 +1,9 @@
 package com.example.hospitalproject.Advice;
 
+import com.example.hospitalproject.Exception.Comment.NotFoundCommentIdException;
+import com.example.hospitalproject.Exception.Payment.PayCancelException;
+import com.example.hospitalproject.Exception.Payment.DuplicateCardInfoException;
+import com.example.hospitalproject.Exception.Payment.NotFoundBankException;
 import com.example.hospitalproject.Exception.Payment.*;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChatBoardException;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChattingException;
@@ -82,6 +86,13 @@ public class ExceptionAdvice {
     public Response payCancelException(PayCancelException e) {
         return Response.failure(404, e.getMessage());
     }
+
+    @ExceptionHandler(NotFoundCommentIdException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundCommentIdException() {
+        return Response.failure(404, "해당 댓글이 존재하지 않습니다.");
+    }
+
 
     @ExceptionHandler(NotFoundCardException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
