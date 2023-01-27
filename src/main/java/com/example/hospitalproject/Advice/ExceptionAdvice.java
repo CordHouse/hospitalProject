@@ -94,4 +94,10 @@ public class ExceptionAdvice {
     public Response notFoundCardListException() {
         return Response.failure(404, "해당 계정은 등록된 카드가 없습니다.");
     }
+
+    @ExceptionHandler(NotFoundCardChoiceException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundCardChoiceException() {
+        return Response.failure(404, "선택된 카드가 없습니다.");
+    }
 }
