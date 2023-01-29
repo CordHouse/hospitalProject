@@ -50,7 +50,7 @@ public class UserRestController {
         return Response.success(userService.passwordReissue(requestDto));
     }
 
-    @PostMapping("/user/password")
+    @PutMapping("/user/password")
     @ResponseStatus(HttpStatus.OK)
     public void changePassword(@RequestBody @Valid UserPasswordChangeRequestDto requestDto) {
         userService.changePassword(requestDto);
