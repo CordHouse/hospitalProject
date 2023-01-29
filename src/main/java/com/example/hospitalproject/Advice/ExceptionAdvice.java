@@ -1,5 +1,7 @@
 package com.example.hospitalproject.Advice;
 
+import com.example.hospitalproject.Exception.Board.NotFoundBoardException;
+import com.example.hospitalproject.Exception.Board.UserNameDifferentException;
 import com.example.hospitalproject.Exception.Comment.NotFoundCommentIdException;
 import com.example.hospitalproject.Exception.Payment.PayCancelException;
 import com.example.hospitalproject.Exception.Payment.DuplicateCardInfoException;
@@ -8,9 +10,11 @@ import com.example.hospitalproject.Exception.Payment.*;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChatBoardException;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChattingException;
 import com.example.hospitalproject.Exception.ChatBoard.NotMatchSenderDeleteException;
+import com.example.hospitalproject.Exception.Payment.NotFoundPayTypeException;
 import com.example.hospitalproject.Exception.RefreshToken.NotFoundRefreshTokenException;
 import com.example.hospitalproject.Exception.UserException.LoginFailureException;
-import com.example.hospitalproject.Exception.UserException.NotFoundUsernameException;
+import com.example.hospitalproject.Exception.UserException.NotFoundUserException;
+import com.example.hospitalproject.Exception.UserException.UserInfoDuplicationException;
 import com.example.hospitalproject.Response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -39,10 +43,16 @@ public class ExceptionAdvice {
         return Response.failure(404, "해당 사용자의 정보와 일치하는 토큰을 찾지 못하였습니다.");
     }
 
-    @ExceptionHandler(NotFoundUsernameException.class)
+    @ExceptionHandler(NotFoundUserException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Response userNameNotFoundException(NotFoundUsernameException e) {
+    public Response userNameNotFoundException(NotFoundUserException e) {
         return Response.failure(404, e.getMessage());
+    }
+
+    @ExceptionHandler(UserInfoDuplicationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Response userInfoDuplicationException(UserInfoDuplicationException e) {
+        return Response.failure(409, e.getMessage());
     }
 
     @ExceptionHandler(NotFoundChatBoardException.class)
@@ -87,12 +97,23 @@ public class ExceptionAdvice {
         return Response.failure(404, e.getMessage());
     }
 
+    @ExceptionHandler(NotFoundBoardException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundBoardException(){
+        return Response.failure(404, "존재하지 않는 게시글입니다.");
+    }
+
+    @ExceptionHandler(UserNameDifferentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response userNameDifferentException(){
+        return Response.failure(400, "게시글의 작성자가 아닙니다.");
+    }
+
     @ExceptionHandler(NotFoundCommentIdException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response notFoundCommentIdException() {
         return Response.failure(404, "해당 댓글이 존재하지 않습니다.");
     }
-
 
     @ExceptionHandler(NotFoundCardException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)

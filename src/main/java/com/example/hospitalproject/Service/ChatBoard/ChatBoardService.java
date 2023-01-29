@@ -9,7 +9,7 @@ import com.example.hospitalproject.Entity.Chatting.Chatting;
 import com.example.hospitalproject.Entity.User.User;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChatBoardException;
 import com.example.hospitalproject.Exception.ChatBoard.NotFoundChattingException;
-import com.example.hospitalproject.Exception.UserException.NotFoundUsernameException;
+import com.example.hospitalproject.Exception.UserException.NotFoundUserException;
 import com.example.hospitalproject.Repository.ChatBoard.ChatBoardRepository;
 import com.example.hospitalproject.Repository.ChatBoard.ChattingRepository;
 import com.example.hospitalproject.Repository.User.UserRepository;
@@ -45,7 +45,7 @@ public class ChatBoardService{
     public void createPrivateChatBoard(ChatBoardReceiverRequestDto chatBoardReceiverRequestDto){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         userRepository.findByUsername(chatBoardReceiverRequestDto.getReceiver()).orElseThrow(() -> {
-            throw new NotFoundUsernameException("해당 아이디는 회원 계정이 아닙니다.");
+            throw new NotFoundUserException("해당 아이디는 회원 계정이 아닙니다.");
         });
         ChatBoard chatBoard = new ChatBoard(
                 ChatTitleType.PRIVATE_CHAT.name(),
@@ -76,7 +76,7 @@ public class ChatBoardService{
     public void deleteChatBoard(long id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
-            throw new NotFoundUsernameException("유저정보가 올바르지 않습니다.");
+            throw new NotFoundUserException("유저정보가 올바르지 않습니다.");
         });
         ChatBoard chatBoard = chatBoardRepository.findById(id).orElseThrow(NotFoundChatBoardException::new);
         whoIsDelete(chatBoard, user.getUsername());

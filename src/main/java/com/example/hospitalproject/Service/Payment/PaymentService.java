@@ -5,7 +5,7 @@ import com.example.hospitalproject.Dto.Payment.Card.PayChargeRequestDto;
 import com.example.hospitalproject.Entity.Payment.Code;
 import com.example.hospitalproject.Entity.Payment.GroupCode;
 import com.example.hospitalproject.Entity.Payment.Payment;
-import com.example.hospitalproject.Exception.UserException.NotFoundUsernameException;
+import com.example.hospitalproject.Exception.UserException.NotFoundUserException;
 import com.example.hospitalproject.Repository.Payment.Card.CardRepository;
 import com.example.hospitalproject.Repository.Payment.PaymentRepository;
 import com.example.hospitalproject.Repository.User.UserRepository;
@@ -40,7 +40,7 @@ public class PaymentService {
                 Code.findCodeType(payChargeRequestDto.getCode()).getCode(),
                 payChargeRequestDto.getCode(),
                 cardRepository.findByUser(userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
-                    throw new NotFoundUsernameException("해당 계정이 존재하지 않습니다.");
+                    throw new NotFoundUserException("해당 계정이 존재하지 않습니다.");
                 })),
                 "승인"
         );

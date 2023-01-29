@@ -1,9 +1,11 @@
 package com.example.hospitalproject.Service.Board;
 
+import com.example.hospitalproject.Dto.Board.BoardChangeRequestDto;
 import com.example.hospitalproject.Dto.Board.BoardCreateRequestDto;
 import com.example.hospitalproject.Entity.Board.Board;
 import com.example.hospitalproject.Entity.User.RoleUserGrade;
 import com.example.hospitalproject.Exception.Board.NotFoundBoardException;
+import com.example.hospitalproject.Exception.Board.UserNameDifferentException;
 import com.example.hospitalproject.Repository.Board.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -37,6 +39,23 @@ public class BoardService {
     public void delete(Long id){
         boardRepository.findById(id).orElseThrow(NotFoundBoardException::new);
         boardRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void change(Long id, BoardChangeRequestDto boardChangeRequestDto){
+        Board board = boardRepository.findById(id).orElseThrow(NotFoundBoardException::new);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String user = authentication.getName();
+        String boardUser = board.getWriter();
+
+        if(!user.equals(boardUser)){
+            throw new UserNameDifferentException();
+        }
+
+        board.setTitle(boardChangeRequestDto.getTitle());
+        board.setContent(boardChangeRequestDto.getContent());
     }
 
 }

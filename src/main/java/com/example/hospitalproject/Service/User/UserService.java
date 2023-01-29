@@ -3,24 +3,26 @@ package com.example.hospitalproject.Service.User;
 import com.example.hospitalproject.Config.jwt.TokenProvider;
 import com.example.hospitalproject.Dto.Token.RefreshTokenDto;
 import com.example.hospitalproject.Dto.Token.TokenReIssueDto;
-import com.example.hospitalproject.Dto.User.UserGradeSearchRequestDto;
-import com.example.hospitalproject.Dto.User.UserRegisterRequestDto;
-import com.example.hospitalproject.Dto.User.UserSignInRequestDto;
-import com.example.hospitalproject.Dto.User.UserSignInResponseDto;
+import com.example.hospitalproject.Dto.User.*;
 import com.example.hospitalproject.Entity.User.RefreshToken;
 import com.example.hospitalproject.Entity.User.User;
 import com.example.hospitalproject.Entity.User.RoleUserGrade;
 import com.example.hospitalproject.Exception.RefreshToken.NotFoundRefreshTokenException;
 import com.example.hospitalproject.Exception.UserException.LoginFailureException;
+import com.example.hospitalproject.Exception.UserException.NotFoundUserException;
+import com.example.hospitalproject.Exception.UserException.UserInfoDuplicationException;
 import com.example.hospitalproject.Repository.RefreshToken.RefreshTokenRepository;
 import com.example.hospitalproject.Repository.User.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +39,10 @@ public class UserService {
 
     @Transactional
     public String signUp(UserRegisterRequestDto userRegisterRequestDto){
+        if(userRepository.existsUserByUsernameOrEmailOrPhone(userRegisterRequestDto.getUsername(),
+                userRegisterRequestDto.getEmail(), userRegisterRequestDto.getPhone()))
+            throw new UserInfoDuplicationException("이미 가입된 사용자의 정보를 입력하셨습니다. 아이디, Email, 전화 번호를 다시 한번 확인해주세요.");
+
         User user = new User(
                 userRegisterRequestDto.getName(),
                 userRegisterRequestDto.getUsername(),
@@ -86,6 +92,37 @@ public class UserService {
                 .originToken(refreshTokenDto.getOriginToken())
                 .refreshToken(refreshTokenDto.getRefreshToken())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public String searchUserId(UserIdSearchRequestDto requestDto) {
+        User findUser = userRepository.findUserByEmailAndPhone(requestDto.getEmail(), requestDto.getPhone())
+                .orElseThrow(() -> new NotFoundUserException("해당 정보와 일치하는 사용자가 존재하지 않습니다."));
+
+        return findUser.getUsername();
+    }
+
+    @Transactional
+    public String passwordReissue(UserPasswordReissueRequestDto requestDto) {
+        User findUser = userRepository
+                .findUserByEmailAndPhoneAndUsername(requestDto.getEmail(), requestDto.getPhone(), requestDto.getUsername())
+                .orElseThrow(() -> new NotFoundUserException("해당 정보와 일치하는 사용자가 존재하지 않습니다."));
+
+        String randomNumber = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10) + "!@#";
+
+        findUser.setPassword(passwordEncoder.encode(randomNumber));
+
+        return randomNumber;
+    }
+
+    @Transactional
+    public void changePassword(UserPasswordChangeRequestDto requestDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        User findUser = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new NotFoundUserException("현재 로그인한 사용자와 일치하는 정보가 없습니다."));
+
+        findUser.setPassword(passwordEncoder.encode(requestDto.getPassword()));
     }
 
     @Transactional

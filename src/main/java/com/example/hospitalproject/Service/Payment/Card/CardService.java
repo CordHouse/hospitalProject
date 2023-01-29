@@ -7,7 +7,7 @@ import com.example.hospitalproject.Entity.Payment.Credit.BankType;
 import com.example.hospitalproject.Entity.Payment.Credit.Card;
 import com.example.hospitalproject.Entity.User.User;
 import com.example.hospitalproject.Exception.Payment.*;
-import com.example.hospitalproject.Exception.UserException.NotFoundUsernameException;
+import com.example.hospitalproject.Exception.UserException.NotFoundUserException;
 import com.example.hospitalproject.Repository.Payment.Card.CardRepository;
 import com.example.hospitalproject.Repository.User.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class CardService {
         cardInfoMatchCheck(cardInfoRequestDto);
         Card card = new Card(
                 userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
-                    throw new NotFoundUsernameException("해당 아이디가 존재하지 않습니다.");
+                    throw new NotFoundUserException("해당 아이디가 존재하지 않습니다.");
                 }),
                 cardInfoRequestDto.getBank(),
                 cardInfoRequestDto.getCardNumber(),
@@ -67,7 +67,7 @@ public class CardService {
     public List<CardInquiryResponseDto> getMyCardList(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<Card> card = cardRepository.findAllByUser(userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
-            throw new NotFoundUsernameException("해당 유저가 존재하지 않습니다.");
+            throw new NotFoundUserException("해당 유저가 존재하지 않습니다.");
         }));
         List<CardInquiryResponseDto> cardList = new LinkedList<>();
         card.forEach(value -> cardList.add(new CardInquiryResponseDto().toDo(value)));
@@ -81,7 +81,7 @@ public class CardService {
     public CardInquiryResponseDto getMyCard(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<Card> card = cardRepository.findAllByUser(userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
-            throw new NotFoundUsernameException("해당 유저가 존재하지 않습니다.");
+            throw new NotFoundUserException("해당 유저가 존재하지 않습니다.");
         }));
         if(card.stream().filter(value -> value.getSelectCard().equals("선택")).count() == 1){
             return new CardInquiryResponseDto().toDo(card.stream().filter(value -> value.getSelectCard().equals("선택")).findAny().orElseThrow());
@@ -156,7 +156,7 @@ public class CardService {
     protected boolean selectCardListCheck(long id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
-            throw new NotFoundUsernameException("존재하지 않는 계정입니다.");
+            throw new NotFoundUserException("존재하지 않는 계정입니다.");
         });
         List<Card> cardList = cardRepository.findAllByUser(user);
         if(cardList.isEmpty()){
@@ -175,7 +175,7 @@ public class CardService {
         if(username.equals(compareUsername)){
             return;
         }
-        throw new NotFoundUsernameException("카드 등록자와 일치하지 않습니다.");
+        throw new NotFoundUserException("카드 등록자와 일치하지 않습니다.");
     }
 
 }
