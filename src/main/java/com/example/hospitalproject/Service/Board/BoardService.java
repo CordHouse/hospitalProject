@@ -2,6 +2,7 @@ package com.example.hospitalproject.Service.Board;
 
 import com.example.hospitalproject.Dto.Board.BoardChangeRequestDto;
 import com.example.hospitalproject.Dto.Board.BoardCreateRequestDto;
+import com.example.hospitalproject.Dto.Board.BoardViewCountRequestDto;
 import com.example.hospitalproject.Entity.Board.Board;
 import com.example.hospitalproject.Entity.User.RoleUserGrade;
 import com.example.hospitalproject.Exception.Board.NotFoundBoardException;
@@ -56,6 +57,14 @@ public class BoardService {
 
         board.setTitle(boardChangeRequestDto.getTitle());
         board.setContent(boardChangeRequestDto.getContent());
+    }
+
+    @Transactional
+    public void visitor(Long id, BoardViewCountRequestDto boardViewCountRequestDto){
+        Board board = boardRepository.findById(id).orElseThrow(() ->
+                new IllegalStateException("해당 게시글이 존재하지 않습니다."));
+
+        boardViewCountRequestDto.updateVisit(boardViewCountRequestDto.getViewCount());
     }
 
 }
