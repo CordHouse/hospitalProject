@@ -4,7 +4,6 @@ import com.example.hospitalproject.Config.jwt.JwtAccessDeniedHandler;
 import com.example.hospitalproject.Config.jwt.JwtAuthenticationEntryPointHandler;
 import com.example.hospitalproject.Config.jwt.JwtSecurityConfig;
 import com.example.hospitalproject.Config.jwt.TokenProvider;
-import com.example.hospitalproject.Entity.User.RoleUserGrade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -40,7 +39,7 @@ public class SecurityConfigure {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/home/user/sign-in", "/home/user/sign-up").permitAll()
+                .antMatchers("/home/user/sign-in", "/home/user/sign-up", "/home/user/id", "/home/user/password/reissue").permitAll()
                 .antMatchers("/chat/**").access("hasRole(\"ADMIN\") or hasRole(\"MANAGER\") or hasRole(\"EXCELLENT_MEMBER\") or hasRole(\"COMMON_MEMBER\")")
                 .antMatchers("/chatting/**").access("hasRole(\"ADMIN\") or hasRole(\"MANAGER\") or hasRole(\"EXCELLENT_MEMBER\") or hasRole(\"COMMON_MEMBER\")")
                 .antMatchers("/payment/common/**").access("hasRole(\"ADMIN\") or hasRole(\"MANAGER\") or hasRole(\"EXCELLENT_MEMBER\") or hasRole(\"COMMON_MEMBER\")")
