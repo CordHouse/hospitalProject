@@ -13,7 +13,8 @@ import com.example.hospitalproject.Exception.ChatBoard.NotMatchSenderDeleteExcep
 import com.example.hospitalproject.Exception.Payment.NotFoundPayTypeException;
 import com.example.hospitalproject.Exception.RefreshToken.NotFoundRefreshTokenException;
 import com.example.hospitalproject.Exception.UserException.LoginFailureException;
-import com.example.hospitalproject.Exception.UserException.NotFoundUsernameException;
+import com.example.hospitalproject.Exception.UserException.NotFoundUserException;
+import com.example.hospitalproject.Exception.UserException.UserInfoDuplicationException;
 import com.example.hospitalproject.Response.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -42,10 +43,16 @@ public class ExceptionAdvice {
         return Response.failure(404, "해당 사용자의 정보와 일치하는 토큰을 찾지 못하였습니다.");
     }
 
-    @ExceptionHandler(NotFoundUsernameException.class)
+    @ExceptionHandler(NotFoundUserException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Response userNameNotFoundException(NotFoundUsernameException e) {
+    public Response userNameNotFoundException(NotFoundUserException e) {
         return Response.failure(404, e.getMessage());
+    }
+
+    @ExceptionHandler(UserInfoDuplicationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Response userInfoDuplicationException(UserInfoDuplicationException e) {
+        return Response.failure(409, e.getMessage());
     }
 
     @ExceptionHandler(NotFoundChatBoardException.class)
@@ -107,7 +114,6 @@ public class ExceptionAdvice {
     public Response notFoundCommentIdException() {
         return Response.failure(404, "해당 댓글이 존재하지 않습니다.");
     }
-
 
     @ExceptionHandler(NotFoundCardException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
