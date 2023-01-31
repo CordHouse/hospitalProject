@@ -16,7 +16,6 @@ public class PaymentRestController {
 
     /**
      * 결제 진행
-     * @param payChargeRequestDto
      */
     @PostMapping("/common/charge")
     @ResponseStatus(HttpStatus.OK)
@@ -26,7 +25,6 @@ public class PaymentRestController {
 
     /**
      * 결제 취소
-     * @param id
      */
     @PostMapping("/common/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -36,7 +34,6 @@ public class PaymentRestController {
 
     /**
      * 결제 취소 승인
-     * @param id
      */
     @PostMapping("/manager/{id}")
     @ResponseStatus(HttpStatus.OK)
