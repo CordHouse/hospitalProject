@@ -25,6 +25,9 @@ public class Comment {
     @Column(nullable = false)
     private String writer;
 
+    @Column(nullable = false, name = "commentLike")
+    private int like;
+
     @DateTimeFormat(pattern = "yyyy-mm-dd HH:mm:ss")
     private LocalDateTime createDate;
 
@@ -34,10 +37,10 @@ public class Comment {
     }
 
     public Comment(String comment, String writer, Board board){
-
         this.comment=comment;
         this.writer=writer;
         this.board=board;
+        this.like = 0;
     }
 
     @JoinColumn(nullable = false)
