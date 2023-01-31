@@ -36,8 +36,6 @@ public class ChatBoardRestController {
 
     /**
      * 개인 채팅방 제목 변경
-     * @param editPrivateTitleRequestDto
-     * @param id (PK)
      */
     @PutMapping("/change/title/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -47,7 +45,6 @@ public class ChatBoardRestController {
 
     /**
      * 채팅방 목록 가져오기
-     * @return
      */
     @GetMapping("/my")
     @ResponseStatus(HttpStatus.OK)
@@ -57,7 +54,6 @@ public class ChatBoardRestController {
 
     /**
      * 채팅방 삭제 -> 진짜로 삭제되는 것은 아니고, 데이터 보관을 위해 true, false로 여부만 확인한다.
-     * @param id
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
