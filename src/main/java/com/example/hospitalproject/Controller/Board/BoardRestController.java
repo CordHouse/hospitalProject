@@ -15,18 +15,31 @@ import javax.validation.Valid;
 public class BoardRestController {
     private final BoardService boardService;
 
+    /**
+     * 댓글 생성 검증
+     * @param boardCreateRequestDto
+     */
     @PostMapping("/board")
     @ResponseStatus(HttpStatus.OK)
     public void create(@RequestBody @Valid BoardCreateRequestDto boardCreateRequestDto){
         boardService.create(boardCreateRequestDto);
     }
 
+    /**
+     * 댓글 삭제 검증
+     * @param id
+     */
     @DeleteMapping("/board/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void delete(@PathVariable Long id){
         boardService.delete(id);
     }
 
+    /**
+     * 댓글 수정 검증
+     * @param id
+     * @param boardChangeRequestDto
+     */
     @PutMapping("/board/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void change(@PathVariable Long id, @RequestBody @Valid BoardChangeRequestDto boardChangeRequestDto){
