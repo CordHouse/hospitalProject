@@ -15,24 +15,45 @@ import javax.validation.Valid;
 public class CommentRestController {
     private final CommentService commentService;
 
+    /**
+     * 댓글 생성
+     * @param commentCreateRequestDto
+     * @param id
+     */
     @PostMapping("/create/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void commentCreate(@RequestBody @Valid CommentCreateRequestDto commentCreateRequestDto, @PathVariable long id){
         commentService.commentCreate(commentCreateRequestDto, id);  //(@RequestBody)json데이터가 검증단계를 거치고 service로 넘어감
     }
 
+    /**
+     * 댓글 수정
+     * @param commentEditRequestDto
+     * @param id
+     */
     @PutMapping("/edit/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void commentEdit(@RequestBody @Valid CommentEditRequestDto commentEditRequestDto, @PathVariable long id){
         commentService.commentEdit(commentEditRequestDto, id);
     }
 
+
+    /**
+     * 댓글 삭제
+     * @param id
+     */
     @DeleteMapping("/remove/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void commentRemove(@PathVariable long id){
         commentService.commentRemove(id);
     }
 
+    /**
+     * 댓글 좋아요
+     */
+    @PutMapping("/{id}/like")
+    @ResponseStatus(HttpStatus.OK)
+    public void commentLike(@PathVariable long id) { commentService.commentLike(id);}
 }
 
 
