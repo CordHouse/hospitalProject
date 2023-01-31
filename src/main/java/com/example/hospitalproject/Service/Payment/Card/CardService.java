@@ -52,9 +52,16 @@ public class CardService {
      */
     @Transactional
     public void cardChoice(long id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
+            throw new NotFoundUserException("유저가 존재하지 않습니다.");
+        });
         Card card = cardRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundCardException("등록되지 않은 카드입니다.");
         });
+        if(card.getSelectCard().equals("선택")){
+            throw new CardSameStatusException();
+        }
         if(selectCardListCheck(id)) {
             card.setSelectCard("선택");
         }
@@ -110,6 +117,31 @@ public class CardService {
         usernameAuthCompareCheck(authentication.getName(), cardAfter.getUser().getUsername());
         CardInquiryResponseDto afterChoiceCard = new CardInquiryResponseDto().toDo(cardAfter);
         return new CardChangeResponseDto().toDo(beforeChoiceCard, afterChoiceCard);
+    }
+
+    /**
+     * 등록한 카드가 하나이고 선택상태를 미선택으로 바꾸고 싶은 경우
+     */
+    @Transactional
+    public CardInquiryResponseDto cardChoiceChange(long id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Card card = cardRepository.findByIdAndUser_Username(id, authentication.getName()).orElseThrow(() -> {
+            throw new NotFoundUserException("일치하는 정보가 존재하지 않습니다.");
+        });
+        card.setSelectCard("미선택");
+        return new CardInquiryResponseDto().toDo(card);
+    }
+
+    /**
+     * 등록된 카드 삭제
+     */
+    @Transactional
+    public void deleteRegistrationCard(long id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
+            throw new NotFoundUserException("해당 유저가 존재하지 않습니다.");
+        });
+        cardRepository.deleteById(id);
     }
 
     /**
