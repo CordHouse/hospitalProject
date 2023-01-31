@@ -39,6 +39,15 @@ public class UserRestController {
     }
 
     /*
+    * 회원 탈퇴 로직
+    */
+    @DeleteMapping("/user")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteUser() {
+        userService.deleteUser();
+    }
+
+    /*
     * 토큰 재발급 로직
     * */
     @PostMapping("/user/reissue")
