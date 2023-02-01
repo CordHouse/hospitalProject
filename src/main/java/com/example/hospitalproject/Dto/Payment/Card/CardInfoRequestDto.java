@@ -1,6 +1,7 @@
 package com.example.hospitalproject.Dto.Payment.Card;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import javax.validation.constraints.Pattern;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class CardInfoRequestDto {
     @NotBlank(message = "은행을 입력해주세요.")
     private String bank;

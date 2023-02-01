@@ -55,9 +55,27 @@ public class CardRestController {
      * 선택한 카드 변경
      * id는 변경할 카드 번호
      */
-    @PostMapping("/my/{id}")
+    @PutMapping("/my/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response changeMyChoiceCard(@PathVariable long id){
         return Response.success(cardService.changeMyChoiceCard(id));
+    }
+
+    /**
+     * 등록된 카드가 하나이고 카드를 미선택으로 변경하고 싶을때
+     */
+    @PutMapping("/status/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response cardChoiceChange(@PathVariable long id){
+        return Response.success(cardService.cardChoiceChange(id));
+    }
+
+    /**
+     * 등록한 카드 삭제
+     */
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteRegistrationCard(@PathVariable long id){
+        cardService.deleteRegistrationCard(id);
     }
 }

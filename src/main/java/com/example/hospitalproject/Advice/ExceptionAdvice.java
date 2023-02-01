@@ -132,4 +132,10 @@ public class ExceptionAdvice {
     public Response notFoundCardChoiceException() {
         return Response.failure(404, "선택된 카드가 없습니다.");
     }
+
+    @ExceptionHandler(CardSameStatusException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response cardSameStatusException() {
+        return Response.failure(404, "이미 선택된 카드입니다.");
+    }
 }
