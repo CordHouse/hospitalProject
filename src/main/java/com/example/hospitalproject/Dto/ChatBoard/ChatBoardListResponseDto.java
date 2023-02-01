@@ -2,6 +2,7 @@ package com.example.hospitalproject.Dto.ChatBoard;
 
 import com.example.hospitalproject.Entity.Chatting.ChatBoard;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ChatBoardListResponseDto {
     private Long id;
     private String chatTitle;
