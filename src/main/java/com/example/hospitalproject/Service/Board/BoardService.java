@@ -2,12 +2,13 @@ package com.example.hospitalproject.Service.Board;
 
 import com.example.hospitalproject.Dto.Board.BoardChangeRequestDto;
 import com.example.hospitalproject.Dto.Board.BoardCreateRequestDto;
-import com.example.hospitalproject.Dto.Board.BoardViewCountRequestDto;
+import com.example.hospitalproject.Dto.Board.BoardResponseDto;
 import com.example.hospitalproject.Entity.Board.Board;
 import com.example.hospitalproject.Entity.User.RoleUserGrade;
 import com.example.hospitalproject.Exception.Board.NotFoundBoardException;
 import com.example.hospitalproject.Exception.Board.UserNameDifferentException;
 import com.example.hospitalproject.Repository.Board.BoardRepository;
+import com.example.hospitalproject.Repository.User.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public void create(BoardCreateRequestDto requestDto) {
@@ -60,11 +62,17 @@ public class BoardService {
     }
 
     @Transactional
-    public void visitor(Long id, BoardViewCountRequestDto boardViewCountRequestDto){
-        Board board = boardRepository.findById(id).orElseThrow(() ->
-                new IllegalStateException("해당 게시글이 존재하지 않습니다."));
+    public BoardResponseDto getBoard(Long id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        boardViewCountRequestDto.updateVisit(boardViewCountRequestDto.getViewCount());
+        userRepository.findByUsername(authentication.getName());
+
+        Board board = boardRepository.findById(id).orElseThrow(() -> {
+            throw new NotFoundBoardException();
+        });
+
+        board.setViewCount(board.getViewCount() + 1);
+
+        return new BoardResponseDto().toDo(board);
     }
-
 }
