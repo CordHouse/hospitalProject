@@ -63,10 +63,6 @@ public class BoardService {
 
     @Transactional
     public BoardResponseDto getBoard(Long id){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        userRepository.findByUsername(authentication.getName());
-
         Board board = boardRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundBoardException();
         });
