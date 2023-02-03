@@ -1,5 +1,6 @@
 package com.example.hospitalproject.Service.Payment;
 
+import com.example.hospitalproject.Dto.Payment.Card.Format.CustomDecimalFormat;
 import com.example.hospitalproject.Exception.Payment.PayCancelException;
 import com.example.hospitalproject.Dto.Payment.Card.PayChargeRequestDto;
 import com.example.hospitalproject.Entity.Payment.Code;
@@ -35,7 +36,7 @@ public class PaymentService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Payment payment = new Payment(
                 authentication.getName(),
-                payChargeRequestDto.getPaySplit(),
+                new CustomDecimalFormat(payChargeRequestDto.getPay()).getPaySplit(),
                 GroupCode.findGroupCode(Code.findCodeType(payChargeRequestDto.getCode()).getCode()).name(),
                 Code.findCodeType(payChargeRequestDto.getCode()).getCode(),
                 payChargeRequestDto.getCode(),
