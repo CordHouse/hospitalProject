@@ -1,5 +1,6 @@
 package com.example.hospitalproject.Service.Payment.Card;
 
+import com.example.hospitalproject.Authentication.UsernameValid;
 import com.example.hospitalproject.Dto.Payment.Card.CardChangeResponseDto;
 import com.example.hospitalproject.Dto.Payment.Card.CardInfoRequestDto;
 import com.example.hospitalproject.Dto.Payment.Card.CardInquiryResponseDto;
@@ -24,19 +25,18 @@ import java.util.List;
 public class CardService {
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
+    private final UsernameValid usernameValid;
 
     /**
      * 카드 등록하기
      */
     @Transactional
     public void cardRegistration(CardInfoRequestDto cardInfoRequestDto){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
         bankTypeCheck(cardInfoRequestDto.getBank());
         cardInfoMatchCheck(cardInfoRequestDto);
         Card card = new Card(
-                userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
-                    throw new NotFoundUserException("해당 아이디가 존재하지 않습니다.");
-                }),
+                getUserObject(authentication.getName()),
                 cardInfoRequestDto.getBank(),
                 cardInfoRequestDto.getCardNumber(),
                 cardInfoRequestDto.getValidYear(),
@@ -52,10 +52,7 @@ public class CardService {
      */
     @Transactional
     public void cardChoice(long id){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
-            throw new NotFoundUserException("유저가 존재하지 않습니다.");
-        });
+        Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
         Card card = cardRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundCardException("등록되지 않은 카드입니다.");
         });
@@ -72,7 +69,7 @@ public class CardService {
      */
     @Transactional(readOnly = true)
     public List<CardInquiryResponseDto> getMyCardList(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
         List<Card> card = cardRepository.findAllByUser(userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
             throw new NotFoundUserException("해당 유저가 존재하지 않습니다.");
         }));
@@ -86,10 +83,7 @@ public class CardService {
      */
     @Transactional(readOnly = true)
     public CardInquiryResponseDto getMyCard(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        List<Card> card = cardRepository.findAllByUser(userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
-            throw new NotFoundUserException("해당 유저가 존재하지 않습니다.");
-        }));
+        List<Card> card = cardRepository.findAllByUser(usernameValid.authenticationCheckReturnUserObject());
         if(card.stream().filter(value -> value.getSelectCard().equals("선택")).count() == 1){
             return new CardInquiryResponseDto().toDo(card.stream().filter(value -> value.getSelectCard().equals("선택")).findAny().orElseThrow());
         }
@@ -101,7 +95,7 @@ public class CardService {
      */
     @Transactional
     public CardChangeResponseDto changeMyChoiceCard(long id){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
         // 이전에 선택된 카드
         Card cardBefore = cardRepository.findById(getMyCard().getId()).orElseThrow(() -> {
             throw new NotFoundCardException("카드가 존재하지 않습니다.");
@@ -124,7 +118,7 @@ public class CardService {
      */
     @Transactional
     public CardInquiryResponseDto cardChoiceChange(long id){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
         Card card = cardRepository.findByIdAndUser_Username(id, authentication.getName()).orElseThrow(() -> {
             throw new NotFoundUserException("일치하는 정보가 존재하지 않습니다.");
         });
@@ -137,11 +131,17 @@ public class CardService {
      */
     @Transactional
     public void deleteRegistrationCard(long id){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
+        usernameValid.doAuthenticationUsernameCheck();
+        cardRepository.deleteById(id);
+    }
+
+    /**
+     * 유저 객체 반환
+     */
+    protected User getUserObject(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> {
             throw new NotFoundUserException("해당 유저가 존재하지 않습니다.");
         });
-        cardRepository.deleteById(id);
     }
 
     /**
