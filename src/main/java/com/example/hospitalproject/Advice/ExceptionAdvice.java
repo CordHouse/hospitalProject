@@ -1,6 +1,5 @@
 package com.example.hospitalproject.Advice;
 
-import com.example.hospitalproject.Exception.AuthorityAccessLimitException;
 import com.example.hospitalproject.Exception.Board.NotFoundBoardException;
 import com.example.hospitalproject.Exception.Board.UserNameDifferentException;
 import com.example.hospitalproject.Exception.Comment.NotFoundCommentIdException;
@@ -138,11 +137,5 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response cardSameStatusException() {
         return Response.failure(404, "이미 선택된 카드입니다.");
-    }
-
-    @ExceptionHandler(AuthorityAccessLimitException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Response authorityAccessLimitException() {
-        return Response.failure(404, "접근권한이 없습니다.");
     }
 }

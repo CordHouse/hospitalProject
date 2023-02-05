@@ -1,19 +1,18 @@
 package com.example.hospitalproject.Service.Payment;
 
-import com.example.hospitalproject.Authentication.UsernameValid;
 import com.example.hospitalproject.Dto.Payment.Card.Format.CustomDecimalFormat;
-import com.example.hospitalproject.Entity.User.RoleUserGrade;
-import com.example.hospitalproject.Entity.User.User;
-import com.example.hospitalproject.Exception.AuthorityAccessLimitException;
 import com.example.hospitalproject.Exception.Payment.PayCancelException;
 import com.example.hospitalproject.Dto.Payment.Card.PayChargeRequestDto;
 import com.example.hospitalproject.Entity.Payment.Code;
 import com.example.hospitalproject.Entity.Payment.GroupCode;
 import com.example.hospitalproject.Entity.Payment.Payment;
+import com.example.hospitalproject.Exception.UserException.NotFoundUserException;
 import com.example.hospitalproject.Repository.Payment.Card.CardRepository;
 import com.example.hospitalproject.Repository.Payment.PaymentRepository;
+import com.example.hospitalproject.Repository.User.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,24 +22,27 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class PaymentService {
     private final PaymentRepository paymentRepository;
+    private final UserRepository userRepository;
     private final CardRepository cardRepository;
-    private final UsernameValid usernameValid;
 
     /**
      * 결제 진행
+     * @param payChargeRequestDto
      */
     @Transactional
     public void payCharge(PayChargeRequestDto payChargeRequestDto){
         // 지불 방법과 코드가 저장할 수 있는 내용인지 먼저 판단
         Code.findCodeType(payChargeRequestDto.getCode()).checkType(payChargeRequestDto.getCode());
-        User user = usernameValid.authenticationCheckReturnUserObject();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Payment payment = new Payment(
-                user.getUsername(),
+                authentication.getName(),
                 new CustomDecimalFormat(payChargeRequestDto.getPay()).getPaySplit(),
                 GroupCode.findGroupCode(Code.findCodeType(payChargeRequestDto.getCode()).getCode()).name(),
                 Code.findCodeType(payChargeRequestDto.getCode()).getCode(),
                 payChargeRequestDto.getCode(),
-                cardRepository.findByUser(user),
+                cardRepository.findByUser(userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
+                    throw new NotFoundUserException("해당 계정이 존재하지 않습니다.");
+                })),
                 "승인"
         );
         paymentRepository.save(payment);
@@ -48,10 +50,10 @@ public class PaymentService {
 
     /**
      * 거래 취소 신청
+     * @param id
      */
     @Transactional
     public void payCancel(long id){
-        usernameValid.doAuthenticationUsernameCheck();
         Payment payment = DoPaymentFindById(id);
         if(!payment.getApproval().equals("승인")){
             throw new PayCancelException("취소 할 수 없는 거래내역 입니다.");
@@ -63,13 +65,12 @@ public class PaymentService {
 
     /**
      * 거래 취소 처리 ( 관리자, 매니저만 가능 )
+     * @param id
      */
     @Transactional
     public void payToDoApproval(long id){
         Payment payment = DoPaymentFindById(id);
-        Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
-        authorityCheck(authentication, RoleUserGrade.ROLE_ADMIN.name());
-        authorityCheck(authentication, RoleUserGrade.ROLE_MANAGER.name());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(payment.getApproval().equals("취소 신청")){
             payment.setApproval("취소 완료");
             payment.setAdminName(authentication.getName());
@@ -78,21 +79,6 @@ public class PaymentService {
         }
     }
 
-    /**
-     * 권한 체크
-     */
-    protected void authorityCheck(Authentication authentication, String roleUserGrade) {
-        authentication.getAuthorities().stream().filter(value ->
-                value.getAuthority().equals(roleUserGrade))
-                .findAny()
-                .orElseThrow(() -> {
-                    throw new AuthorityAccessLimitException();
-                });
-    }
-
-    /**
-     * 거래 내역이 있는지 찾는다.
-     */
     protected Payment DoPaymentFindById(long id){
         return paymentRepository.findById(id).orElseThrow(() -> {
             throw new PayCancelException("거래내역이 존재하지 않습니다.");

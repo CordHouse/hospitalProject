@@ -28,9 +28,6 @@ public class ChatBoardService{
     private final UsernameValid usernameValid;
     private final ChatBoardTypeResponse chatBoardTypeResponse;
 
-    /**
-     * 서비스 센터 (고객센터) 채팅방
-     * */
     @Transactional
     public void createServiceCenterChatBoard(){
         Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
@@ -39,9 +36,6 @@ public class ChatBoardService{
         );
     }
 
-    /**
-     * 개인 채팅방 (1:1)
-     */
     @Transactional
     public void createPrivateChatBoard(ChatBoardReceiverRequestDto chatBoardReceiverRequestDto){
         Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
@@ -50,9 +44,6 @@ public class ChatBoardService{
         );
     }
 
-    /**
-     * 개인 채팅방 제목 변경
-     */
     @Transactional
     public void editPrivateTitle(EditPrivateTitleRequestDto editPrivateTitleRequestDto, long id){
         usernameValid.doAuthenticationUsernameCheck();
@@ -60,9 +51,6 @@ public class ChatBoardService{
         chatBoard.setTitle(editPrivateTitleRequestDto.getChangeTitle());
     }
 
-    /**
-     * 채팅방 목록 가져오기
-     */
     @Transactional(readOnly = true)
     public List<ChatBoardListResponseDto> getMyChatBoardList(){
         Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
@@ -74,20 +62,14 @@ public class ChatBoardService{
         return myChatBoardList;
     }
 
-    /**
-     * 채팅방 삭제 -> 진짜로 삭제되는 것은 아니고, 데이터 보관을 위해 true, false로 여부만 확인한다.
-     */
     @Transactional
     public void deleteChatBoard(long id){
         Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
         ChatBoard chatBoard = chatBoardRepository.findById(id).orElseThrow(NotFoundChatBoardException::new);
         whoIsDelete(chatBoard, authentication.getName());
-        hostAndTargetDoDeleteCheck(chatBoard, authentication);
+        hostAndTargetDoDeleteCheck(chatBoard);
     }
 
-    /**
-     * 누가 삭제요청 했는지 확인하는 함수
-     */
     @Transactional
     protected void whoIsDelete(ChatBoard chatBoard, String username){
         if(chatBoard.getHost().equals(username)){
@@ -96,13 +78,10 @@ public class ChatBoardService{
         chatBoard.setTargetDelete("true");
     }
 
-    /**
-     * host와 target 모두 삭제했는지 확인하는 함수
-     */
     @Transactional
-    protected void hostAndTargetDoDeleteCheck(ChatBoard chatBoard, Authentication authentication){
+    protected void hostAndTargetDoDeleteCheck(ChatBoard chatBoard){
         if(chatBoard.getHostDelete().equals("true") && chatBoard.getTargetDelete().equals("true")) {
-            List<Chatting> chatting = chattingRepository.findAllByChatBoard_IdAAndHostOrTarget(chatBoard.getId(), authentication.getName(), authentication.getName()).orElseThrow(() -> {
+            List<Chatting> chatting = chattingRepository.findAllByChatBoard_Id(chatBoard.getId()).orElseThrow(() -> {
                 throw new NotFoundChattingException("채팅방에 채팅이 존재하지 않습니다.");
             });
             chatting.forEach(chat -> chat.setDoDelete("true"));

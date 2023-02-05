@@ -23,10 +23,10 @@ public class Chatting {
     private String comment;
 
     @Column(nullable = false)
-    private String host;
+    private String sender;
 
     @Column(nullable = false)
-    private String target;
+    private String receiver;
 
     @Column(nullable = false)
     private String doDelete;
@@ -45,11 +45,11 @@ public class Chatting {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private ChatBoard chatBoard;
 
-    public Chatting(String comment, ChatBoard chatBoard, String host, String target){
+    public Chatting(String comment, ChatBoard chatBoard, String sender, String receiver){
         this.comment = comment;
         this.chatBoard = chatBoard;
-        this.host = host;
-        this.target = target;
+        this.sender = sender;
+        this.receiver = receiver;
         this.doDelete = "false";
     }
 }
