@@ -102,7 +102,7 @@ public class ChatBoardService{
     @Transactional
     protected void hostAndTargetDoDeleteCheck(ChatBoard chatBoard, Authentication authentication){
         if(chatBoard.getHostDelete().equals("true") && chatBoard.getTargetDelete().equals("true")) {
-            List<Chatting> chatting = chattingRepository.findAllByChatBoard_IdAAndHostOrTarget(chatBoard.getId(), authentication.getName(), authentication.getName()).orElseThrow(() -> {
+            List<Chatting> chatting = chattingRepository.findAllByChatBoard_IdAndHostOrTarget(chatBoard.getId(), authentication.getName(), authentication.getName()).orElseThrow(() -> {
                 throw new NotFoundChattingException("채팅방에 채팅이 존재하지 않습니다.");
             });
             chatting.forEach(chat -> chat.setDoDelete("true"));
