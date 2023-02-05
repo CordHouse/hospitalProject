@@ -46,7 +46,7 @@ public class ChattingService {
     @Transactional(readOnly = true)
     public List<ChattingCommentResponseDto> getMyChattingList(long id){
         Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
-        List<Chatting> chatting = chattingRepository.findAllByChatBoard_IdAAndHostOrTarget(id, authentication.getName(), authentication.getName()).orElseThrow(() -> {
+        List<Chatting> chatting = chattingRepository.findAllByChatBoard_IdAndHostOrTarget(id, authentication.getName(), authentication.getName()).orElseThrow(() -> {
             throw new NotFoundChattingException("채팅방이 존재하지 않습니다.");
         });
         List<ChattingCommentResponseDto> chattingCommentList = new LinkedList<>();
@@ -60,7 +60,7 @@ public class ChattingService {
     @Transactional
     public void chatDelete(long id){
         Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
-        Chatting chatting = chattingRepository.findByIdAAndHost(id, authentication.getName()).orElseThrow(() -> {
+        Chatting chatting = chattingRepository.findByIdAndHost(id, authentication.getName()).orElseThrow(() -> {
             throw new NotFoundChatBoardException();
         });
         if(chatting.getHost().equals(authentication.getName())) {
