@@ -36,6 +36,9 @@ public class Board {
     @Column(name = "viewCount", columnDefinition = "integer default 0")
     private Integer viewCount;
 
+    @Column(nullable = false, name = "starPoint")
+    private String starPoint;
+
     @Enumerated(EnumType.STRING)
     private RoleUserGrade roleUserGrade;
 
