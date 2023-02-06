@@ -30,6 +30,11 @@ public class BoardService {
 
         board.setTitle(requestDto.getTitle());
         board.setContent(requestDto.getContent());
+        board.setStarPoint(requestDto.getStarPoint());
+
+        // 별점 수정
+        requestDto.todo(Double.parseDouble(requestDto.getStarPoint()));
+
         board.setWriter(authentication.getName());
         board.setRoleUserGrade(RoleUserGrade.findUserGrade(
                 authentication.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.joining())
@@ -59,6 +64,10 @@ public class BoardService {
 
         board.setTitle(boardChangeRequestDto.getTitle());
         board.setContent(boardChangeRequestDto.getContent());
+        board.setStarPoint(boardChangeRequestDto.getStarPoint());
+
+        // 별점 수정
+        boardChangeRequestDto.todo(Double.parseDouble(boardChangeRequestDto.getStarPoint()));
     }
 
     @Transactional
