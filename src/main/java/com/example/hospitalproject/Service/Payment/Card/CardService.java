@@ -52,7 +52,7 @@ public class CardService {
      */
     @Transactional
     public void cardChoice(long id){
-        Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
+        usernameValid.doAuthenticationUsernameCheck();
         Card card = cardRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundCardException("등록되지 않은 카드입니다.");
         });
@@ -69,10 +69,7 @@ public class CardService {
      */
     @Transactional(readOnly = true)
     public List<CardInquiryResponseDto> getMyCardList(){
-        Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
-        List<Card> card = cardRepository.findAllByUser(userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
-            throw new NotFoundUserException("해당 유저가 존재하지 않습니다.");
-        }));
+        List<Card> card = cardRepository.findAllByUser(usernameValid.authenticationCheckReturnUserObject());
         List<CardInquiryResponseDto> cardList = new LinkedList<>();
         card.forEach(value -> cardList.add(new CardInquiryResponseDto().toDo(value)));
         return cardList;
@@ -157,7 +154,7 @@ public class CardService {
      * 입력과 똑같은 카드 리스트 추출
      */
     protected void cardInfoMatchCheck(CardInfoRequestDto cardInfoRequestDto){
-        List<Card> cardList = cardRepository.findByCardNumber(cardInfoRequestDto.getCardNumber()).orElseThrow();
+        List<Card> cardList = cardRepository.findByCardNumber(cardInfoRequestDto.getCardNumber()).orElseThrow(DuplicateCardInfoException::new);
         cardList.forEach(card -> cardNumberCheck(card, cardInfoRequestDto));
     }
 
