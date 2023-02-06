@@ -154,8 +154,10 @@ public class CardService {
      * 입력과 똑같은 카드 리스트 추출
      */
     protected void cardInfoMatchCheck(CardInfoRequestDto cardInfoRequestDto){
-        List<Card> cardList = cardRepository.findByCardNumber(cardInfoRequestDto.getCardNumber()).orElseThrow(DuplicateCardInfoException::new);
-        cardList.forEach(card -> cardNumberCheck(card, cardInfoRequestDto));
+        List<Card> cardList = cardRepository.findByCardNumber(cardInfoRequestDto.getCardNumber());
+        if(!cardList.isEmpty()){
+            cardList.forEach(card -> cardNumberCheck(card, cardInfoRequestDto));
+        }
     }
 
     /**
