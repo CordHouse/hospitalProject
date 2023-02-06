@@ -13,6 +13,7 @@ public class BoardResponseDto {
     private Long id;
     private String title;
     private String content;
+    private String starPoint;
     private String writer;
     private Integer viewCount;
     private RoleUserGrade roleUserGrade;
@@ -22,6 +23,7 @@ public class BoardResponseDto {
                 board.getId(),
                 board.getTitle(),
                 board.getContent(),
+                board.getStarPoint(),
                 board.getWriter(),
                 board.getViewCount(),
                 board.getRoleUserGrade()
