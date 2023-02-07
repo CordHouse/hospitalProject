@@ -13,7 +13,7 @@ public class BoardResponseDto {
     private Long id;
     private String title;
     private String content;
-    private String starPoint;
+    private Double starPoint;
     private String writer;
     private Integer viewCount;
     private RoleUserGrade roleUserGrade;
