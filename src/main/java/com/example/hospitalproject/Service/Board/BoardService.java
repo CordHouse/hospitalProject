@@ -6,6 +6,7 @@ import com.example.hospitalproject.Dto.Board.BoardResponseDto;
 import com.example.hospitalproject.Entity.Board.Board;
 import com.example.hospitalproject.Entity.User.RoleUserGrade;
 import com.example.hospitalproject.Exception.Board.NotFoundBoardException;
+import com.example.hospitalproject.Exception.Board.NotInputStarPointException;
 import com.example.hospitalproject.Exception.Board.UserNameDifferentException;
 import com.example.hospitalproject.Repository.Board.BoardRepository;
 import com.example.hospitalproject.Repository.User.UserRepository;
@@ -32,8 +33,9 @@ public class BoardService {
         board.setContent(requestDto.getContent());
         board.setStarPoint(requestDto.getStarPoint());
 
-        // 별점 수정
-        requestDto.todo(Double.parseDouble(requestDto.getStarPoint()));
+        if(board.getStarPoint() < 0.0 || board.getStarPoint() > 5.0){
+            throw new NotInputStarPointException();
+        }
 
         board.setWriter(authentication.getName());
         board.setRoleUserGrade(RoleUserGrade.findUserGrade(
@@ -66,8 +68,9 @@ public class BoardService {
         board.setContent(boardChangeRequestDto.getContent());
         board.setStarPoint(boardChangeRequestDto.getStarPoint());
 
-        // 별점 수정
-        boardChangeRequestDto.todo(Double.parseDouble(boardChangeRequestDto.getStarPoint()));
+        if(board.getStarPoint() < 0.0 || board.getStarPoint() > 5.0){
+            throw new NotInputStarPointException();
+        }
     }
 
     @Transactional
@@ -76,6 +79,7 @@ public class BoardService {
             throw new NotFoundBoardException();
         });
 
+        // 조회수 증가
         board.setViewCount(board.getViewCount() + 1);
 
         return new BoardResponseDto().toDo(board);
