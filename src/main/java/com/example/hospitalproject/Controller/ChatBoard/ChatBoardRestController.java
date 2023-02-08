@@ -2,10 +2,15 @@ package com.example.hospitalproject.Controller.ChatBoard;
 
 import com.example.hospitalproject.Dto.ChatBoard.ChatBoardReceiverRequestDto;
 import com.example.hospitalproject.Dto.ChatBoard.EditPrivateTitleRequestDto;
+import com.example.hospitalproject.Entity.User.User;
+import com.example.hospitalproject.Exception.UserException.NotFoundUserException;
+import com.example.hospitalproject.Repository.User.UserRepository;
 import com.example.hospitalproject.Response.Response;
 import com.example.hospitalproject.Service.ChatBoard.ChatBoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -15,6 +20,7 @@ import javax.validation.Valid;
 @RequestMapping("/chat")
 public class ChatBoardRestController {
     private final ChatBoardService chatBoardService;
+    private final UserRepository userRepository;
 
     /**
      * 서비스 센터 (고객센터) 채팅방
@@ -22,7 +28,8 @@ public class ChatBoardRestController {
     @PostMapping("/create/service/center")
     @ResponseStatus(HttpStatus.OK)
     public void createChatBoard(){
-        chatBoardService.createServiceCenterChatBoard();
+        User user = userTokenValidCheck();
+        chatBoardService.createServiceCenterChatBoard(user);
     }
 
     /**
@@ -31,7 +38,8 @@ public class ChatBoardRestController {
     @PostMapping("/create/private")
     @ResponseStatus(HttpStatus.OK)
     public void createPrivateChatBoard(@RequestBody @Valid ChatBoardReceiverRequestDto chatBoardReceiverRequestDto){
-        chatBoardService.createPrivateChatBoard(chatBoardReceiverRequestDto);
+        User user = userTokenValidCheck();
+        chatBoardService.createPrivateChatBoard(chatBoardReceiverRequestDto, user);
     }
 
     /**
@@ -40,7 +48,8 @@ public class ChatBoardRestController {
     @PutMapping("/change/title/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void editPrivateTitle(@RequestBody @Valid EditPrivateTitleRequestDto editPrivateTitleRequestDto, @PathVariable long id){
-        chatBoardService.editPrivateTitle(editPrivateTitleRequestDto, id);
+        User user = userTokenValidCheck();
+        chatBoardService.editPrivateTitle(editPrivateTitleRequestDto, id, user);
     }
 
     /**
@@ -49,7 +58,8 @@ public class ChatBoardRestController {
     @GetMapping("/my")
     @ResponseStatus(HttpStatus.OK)
     private Response getMyChatBoardList(){
-        return Response.success(chatBoardService.getMyChatBoardList());
+        User user = userTokenValidCheck();
+        return Response.success(chatBoardService.getMyChatBoardList(user));
     }
 
     /**
@@ -58,6 +68,14 @@ public class ChatBoardRestController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteChatBoard(@PathVariable long id){
-        chatBoardService.deleteChatBoard(id);
+        User user = userTokenValidCheck();
+        chatBoardService.deleteChatBoard(id, user);
+    }
+
+    private User userTokenValidCheck() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
+            throw new NotFoundUserException("해당 유저가 존재하지 않습니다.");
+        });
     }
 }
