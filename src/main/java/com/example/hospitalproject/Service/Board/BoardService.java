@@ -3,6 +3,7 @@ package com.example.hospitalproject.Service.Board;
 import com.example.hospitalproject.Dto.Board.BoardChangeRequestDto;
 import com.example.hospitalproject.Dto.Board.BoardCreateRequestDto;
 import com.example.hospitalproject.Dto.Board.BoardResponseDto;
+import com.example.hospitalproject.Dto.Board.BoardStarPointRequestDto;
 import com.example.hospitalproject.Entity.Board.Board;
 import com.example.hospitalproject.Entity.User.RoleUserGrade;
 import com.example.hospitalproject.Exception.Board.NotFoundBoardException;
@@ -31,12 +32,6 @@ public class BoardService {
 
         board.setTitle(requestDto.getTitle());
         board.setContent(requestDto.getContent());
-        board.setStarPoint(requestDto.getStarPoint());
-
-        if(board.getStarPoint() < 0.0 || board.getStarPoint() > 5.0){
-            throw new NotInputStarPointException();
-        }
-
         board.setWriter(authentication.getName());
         board.setRoleUserGrade(RoleUserGrade.findUserGrade(
                 authentication.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.joining())
@@ -66,11 +61,7 @@ public class BoardService {
 
         board.setTitle(boardChangeRequestDto.getTitle());
         board.setContent(boardChangeRequestDto.getContent());
-        board.setStarPoint(boardChangeRequestDto.getStarPoint());
 
-        if(board.getStarPoint() < 0.0 || board.getStarPoint() > 5.0){
-            throw new NotInputStarPointException();
-        }
     }
 
     @Transactional
@@ -83,5 +74,27 @@ public class BoardService {
         board.setViewCount(board.getViewCount() + 1);
 
         return new BoardResponseDto().toDo(board);
+    }
+
+    @Transactional
+    public void inputStarPoint(Long id, BoardStarPointRequestDto boardStarPointRequestDto){
+        Board board = boardRepository.findById(id).orElseThrow(() -> {
+           throw new NotFoundBoardException();
+        });
+
+        if(board.getStarPoint() < 1.0 || board.getStarPoint() > 5.0) {
+            throw new NotInputStarPointException();
+        }
+
+        starPointCheck(board, boardStarPointRequestDto);
+    }
+
+    @Transactional
+    protected void starPointCheck(Board board, BoardStarPointRequestDto boardStarPointRequestDto){
+        if(board.getStarPoint() == 0){
+            board.setStarPoint(boardStarPointRequestDto.getStarPoint());
+            return;
+        }
+        board.setStarPoint((board.getStarPoint() + boardStarPointRequestDto.getStarPoint()) / 2);
     }
 }
