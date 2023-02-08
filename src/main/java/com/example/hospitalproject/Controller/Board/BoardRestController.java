@@ -2,6 +2,7 @@ package com.example.hospitalproject.Controller.Board;
 
 import com.example.hospitalproject.Dto.Board.BoardChangeRequestDto;
 import com.example.hospitalproject.Dto.Board.BoardCreateRequestDto;
+import com.example.hospitalproject.Dto.Board.BoardStarPointRequestDto;
 import com.example.hospitalproject.Response.Response;
 import com.example.hospitalproject.Service.Board.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +56,19 @@ public class BoardRestController {
      * @param id
      */
     @GetMapping("/board/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public Response getBoard(@PathVariable Long id){
         return Response.success(boardService.getBoard(id));
+    }
+
+    /**
+     * 별점 입력
+     * @param id
+     * @param boardStarPointRequestDto
+     */
+    @PostMapping("/board/{id}/starpoint")
+    @ResponseStatus(HttpStatus.OK)
+    public void inputStarPoint(@PathVariable Long id, @RequestBody @Valid BoardStarPointRequestDto boardStarPointRequestDto){
+        boardService.inputStarPoint(id, boardStarPointRequestDto);
     }
 }
