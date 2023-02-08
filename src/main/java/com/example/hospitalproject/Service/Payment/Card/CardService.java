@@ -9,7 +9,6 @@ import com.example.hospitalproject.Entity.User.User;
 import com.example.hospitalproject.Exception.Payment.*;
 import com.example.hospitalproject.Exception.UserException.NotFoundUserException;
 import com.example.hospitalproject.Repository.Payment.Card.CardRepository;
-import com.example.hospitalproject.Repository.User.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,12 +48,8 @@ public class CardService {
         Card card = cardRepository.findByIdAndUser_Username(id, user.getUsername()).orElseThrow(() -> {
             throw new NotFoundCardException("등록되지 않은 카드입니다.");
         });
-        if(card.getSelectCard().equals("선택")){
-            throw new CardSameStatusException();
-        }
-        if(selectCardListCheck(user)) {
-            card.setSelectCard("선택");
-        }
+        cardSameStatusCheck(card);
+        selectCardCheck(card, user);
     }
 
     /**
@@ -86,14 +81,14 @@ public class CardService {
     @Transactional
     public CardChangeResponseDto changeMyChoiceCard(long id, User user){
         // 이전에 선택된 카드
-        Card cardBefore = cardRepository.findById(getMyCard(user).getId()).orElseThrow(() -> {
+        Card cardBefore = cardRepository.findByIdAndUser_Username(getMyCard(user).getId(), user.getUsername()).orElseThrow(() -> {
             throw new NotFoundCardException("카드가 존재하지 않습니다.");
         });
         cardBefore.setSelectCard("미선택");
         usernameAuthCompareCheck(user.getUsername(), cardBefore.getUser().getUsername());
         CardInquiryResponseDto beforeChoiceCard = new CardInquiryResponseDto().toDo(cardBefore);
         // 변경 후 선택된 카드
-        Card cardAfter = cardRepository.findById(id).orElseThrow(() -> {
+        Card cardAfter = cardRepository.findByIdAndUser_Username(id, user.getUsername()).orElseThrow(() -> {
             throw new NotFoundCardException("등록된 카드가 존재하지 않습니다.");
         });
         cardAfter.setSelectCard("선택");
@@ -163,6 +158,24 @@ public class CardService {
             return "미선택";
         }
         return "선택";
+    }
+
+    /**
+     * 등록된 카드 중 선택된 카드가 이미 있는 경우 확인
+     */
+    protected void cardSameStatusCheck(Card card) {
+        if(card.getSelectCard().equals("선택")){
+            throw new CardSameStatusException();
+        }
+    }
+
+    /**
+     * 선택된 카드가 없는 경우 선택으로 변경
+     */
+    protected void selectCardCheck(Card card, User user) {
+        if(selectCardListCheck(user)) {
+            card.setSelectCard("선택");
+        }
     }
 
     /**
