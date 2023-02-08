@@ -1,6 +1,5 @@
 package com.example.hospitalproject.Service.Payment.Card;
 
-import com.example.hospitalproject.Authentication.UsernameValid;
 import com.example.hospitalproject.Dto.Payment.Card.CardChangeResponseDto;
 import com.example.hospitalproject.Dto.Payment.Card.CardInfoRequestDto;
 import com.example.hospitalproject.Dto.Payment.Card.CardInquiryResponseDto;
@@ -12,8 +11,6 @@ import com.example.hospitalproject.Exception.UserException.NotFoundUserException
 import com.example.hospitalproject.Repository.Payment.Card.CardRepository;
 import com.example.hospitalproject.Repository.User.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,18 +22,16 @@ import java.util.List;
 public class CardService {
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
-    private final UsernameValid usernameValid;
 
     /**
      * 카드 등록하기
      */
     @Transactional
-    public void cardRegistration(CardInfoRequestDto cardInfoRequestDto){
-        Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
+    public void cardRegistration(CardInfoRequestDto cardInfoRequestDto, User user){
         bankTypeCheck(cardInfoRequestDto.getBank());
         cardInfoMatchCheck(cardInfoRequestDto);
         Card card = new Card(
-                getUserObject(authentication.getName()),
+                user,
                 cardInfoRequestDto.getBank(),
                 cardInfoRequestDto.getCardNumber(),
                 cardInfoRequestDto.getValidYear(),
@@ -51,15 +46,14 @@ public class CardService {
      * 등록된 카드 중 선택 할 수 있도록 기능 추가
      */
     @Transactional
-    public void cardChoice(long id){
-        usernameValid.doAuthenticationUsernameCheck();
-        Card card = cardRepository.findById(id).orElseThrow(() -> {
+    public void cardChoice(long id, User user){
+        Card card = cardRepository.findByIdAndUser_Username(id, user.getUsername()).orElseThrow(() -> {
             throw new NotFoundCardException("등록되지 않은 카드입니다.");
         });
         if(card.getSelectCard().equals("선택")){
             throw new CardSameStatusException();
         }
-        if(selectCardListCheck(id)) {
+        if(selectCardListCheck(user)) {
             card.setSelectCard("선택");
         }
     }
@@ -68,8 +62,8 @@ public class CardService {
      * 등록한 카드 리스트 조회
      */
     @Transactional(readOnly = true)
-    public List<CardInquiryResponseDto> getMyCardList(){
-        List<Card> card = cardRepository.findAllByUser(usernameValid.authenticationCheckReturnUserObject());
+    public List<CardInquiryResponseDto> getMyCardList(User user){
+        List<Card> card = cardRepository.findAllByUser(user);
         List<CardInquiryResponseDto> cardList = new LinkedList<>();
         card.forEach(value -> cardList.add(new CardInquiryResponseDto().toDo(value)));
         return cardList;
@@ -79,8 +73,8 @@ public class CardService {
      * 사용할 카드로 선택한 카드 조회
      */
     @Transactional(readOnly = true)
-    public CardInquiryResponseDto getMyCard(){
-        List<Card> card = cardRepository.findAllByUser(usernameValid.authenticationCheckReturnUserObject());
+    public CardInquiryResponseDto getMyCard(User user){
+        List<Card> card = cardRepository.findAllByUser(user);
         if(card.stream().filter(value -> value.getSelectCard().equals("선택")).count() == 1){
             return new CardInquiryResponseDto().toDo(card.stream().filter(value -> value.getSelectCard().equals("선택")).findAny().orElseThrow());
         }
@@ -91,21 +85,20 @@ public class CardService {
      * 사용할 카드 변경
      */
     @Transactional
-    public CardChangeResponseDto changeMyChoiceCard(long id){
-        Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
+    public CardChangeResponseDto changeMyChoiceCard(long id, User user){
         // 이전에 선택된 카드
-        Card cardBefore = cardRepository.findById(getMyCard().getId()).orElseThrow(() -> {
+        Card cardBefore = cardRepository.findById(getMyCard(user).getId()).orElseThrow(() -> {
             throw new NotFoundCardException("카드가 존재하지 않습니다.");
         });
         cardBefore.setSelectCard("미선택");
-        usernameAuthCompareCheck(authentication.getName(), cardBefore.getUser().getUsername());
+        usernameAuthCompareCheck(user.getUsername(), cardBefore.getUser().getUsername());
         CardInquiryResponseDto beforeChoiceCard = new CardInquiryResponseDto().toDo(cardBefore);
         // 변경 후 선택된 카드
         Card cardAfter = cardRepository.findById(id).orElseThrow(() -> {
             throw new NotFoundCardException("등록된 카드가 존재하지 않습니다.");
         });
         cardAfter.setSelectCard("선택");
-        usernameAuthCompareCheck(authentication.getName(), cardAfter.getUser().getUsername());
+        usernameAuthCompareCheck(user.getUsername(), cardAfter.getUser().getUsername());
         CardInquiryResponseDto afterChoiceCard = new CardInquiryResponseDto().toDo(cardAfter);
         return new CardChangeResponseDto().toDo(beforeChoiceCard, afterChoiceCard);
     }
@@ -114,9 +107,8 @@ public class CardService {
      * 등록한 카드가 하나이고 선택상태를 미선택으로 바꾸고 싶은 경우
      */
     @Transactional
-    public CardInquiryResponseDto cardChoiceChange(long id){
-        Authentication authentication = usernameValid.doAuthenticationUsernameCheck();
-        Card card = cardRepository.findByIdAndUser_Username(id, authentication.getName()).orElseThrow(() -> {
+    public CardInquiryResponseDto cardChoiceChange(long id, User user){
+        Card card = cardRepository.findByIdAndUser_Username(id, user.getUsername()).orElseThrow(() -> {
             throw new NotFoundUserException("일치하는 정보가 존재하지 않습니다.");
         });
         card.setSelectCard("미선택");
@@ -127,18 +119,11 @@ public class CardService {
      * 등록된 카드 삭제
      */
     @Transactional
-    public void deleteRegistrationCard(long id){
-        usernameValid.doAuthenticationUsernameCheck();
-        cardRepository.deleteById(id);
-    }
-
-    /**
-     * 유저 객체 반환
-     */
-    protected User getUserObject(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> {
-            throw new NotFoundUserException("해당 유저가 존재하지 않습니다.");
+    public void deleteRegistrationCard(long id, User user){
+        cardRepository.findByIdAndUser_Username(id, user.getUsername()).orElseThrow(() -> {
+            throw new NotFoundCardException("해당 카드를 찾을 수 없습니다.");
         });
+        cardRepository.deleteById(id);
     }
 
     /**
@@ -184,11 +169,7 @@ public class CardService {
     /**
      * 본인 카드 목록 중에 선택된 카드가 있는지 확인하는 함수 (등록될 카드는 한장이여야 한다.)
      */
-    protected boolean selectCardListCheck(long id){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
-            throw new NotFoundUserException("존재하지 않는 계정입니다.");
-        });
+    protected boolean selectCardListCheck(User user){
         List<Card> cardList = cardRepository.findAllByUser(user);
         if(cardList.isEmpty()){
             throw new NotFoundCardListException();
