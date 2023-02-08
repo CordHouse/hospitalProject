@@ -21,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CardService {
     private final CardRepository cardRepository;
-    private final UserRepository userRepository;
 
     /**
      * 카드 등록하기
