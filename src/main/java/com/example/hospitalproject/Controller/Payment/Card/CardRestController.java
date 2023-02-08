@@ -1,10 +1,15 @@
 package com.example.hospitalproject.Controller.Payment.Card;
 
 import com.example.hospitalproject.Dto.Payment.Card.CardInfoRequestDto;
+import com.example.hospitalproject.Entity.User.User;
+import com.example.hospitalproject.Exception.UserException.NotFoundUserException;
+import com.example.hospitalproject.Repository.User.UserRepository;
 import com.example.hospitalproject.Response.Response;
 import com.example.hospitalproject.Service.Payment.Card.CardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -14,6 +19,7 @@ import javax.validation.Valid;
 @RequestMapping("/payment/card")
 public class CardRestController {
     private final CardService cardService;
+    private final UserRepository userRepository;
 
     /**
      * 신용카드 등록
@@ -21,7 +27,8 @@ public class CardRestController {
     @PostMapping("/registration")
     @ResponseStatus(HttpStatus.OK)
     public void cardRegistration(@RequestBody @Valid CardInfoRequestDto cardInfoRequestDto){
-        cardService.cardRegistration(cardInfoRequestDto);
+        User user = userTokenValidCheck();
+        cardService.cardRegistration(cardInfoRequestDto, user);
     }
 
     /**
@@ -30,7 +37,8 @@ public class CardRestController {
     @PostMapping("/choice/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void cardChoice(@PathVariable long id){
-        cardService.cardChoice(id);
+        User user = userTokenValidCheck();
+        cardService.cardChoice(id, user);
     }
 
     /**
@@ -39,7 +47,8 @@ public class CardRestController {
     @GetMapping("/my/list")
     @ResponseStatus(HttpStatus.OK)
     public Response getMyCardList(){
-        return Response.success(cardService.getMyCardList());
+        User user = userTokenValidCheck();
+        return Response.success(cardService.getMyCardList(user));
     }
 
     /**
@@ -48,7 +57,8 @@ public class CardRestController {
     @GetMapping("/my")
     @ResponseStatus(HttpStatus.OK)
     public Response getMyCard(){
-        return Response.success(cardService.getMyCard());
+        User user = userTokenValidCheck();
+        return Response.success(cardService.getMyCard(user));
     }
 
     /**
@@ -58,7 +68,8 @@ public class CardRestController {
     @PutMapping("/my/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response changeMyChoiceCard(@PathVariable long id){
-        return Response.success(cardService.changeMyChoiceCard(id));
+        User user = userTokenValidCheck();
+        return Response.success(cardService.changeMyChoiceCard(id, user));
     }
 
     /**
@@ -67,7 +78,8 @@ public class CardRestController {
     @PutMapping("/status/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response cardChoiceChange(@PathVariable long id){
-        return Response.success(cardService.cardChoiceChange(id));
+        User user = userTokenValidCheck();
+        return Response.success(cardService.cardChoiceChange(id, user));
     }
 
     /**
@@ -76,6 +88,14 @@ public class CardRestController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteRegistrationCard(@PathVariable long id){
-        cardService.deleteRegistrationCard(id);
+        User user = userTokenValidCheck();
+        cardService.deleteRegistrationCard(id, user);
+    }
+
+    private User userTokenValidCheck() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
+            throw new NotFoundUserException("해당 유저가 존재하지 않습니다.");
+        });
     }
 }
