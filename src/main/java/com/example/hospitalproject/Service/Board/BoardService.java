@@ -3,9 +3,11 @@ package com.example.hospitalproject.Service.Board;
 import com.example.hospitalproject.Dto.Board.BoardChangeRequestDto;
 import com.example.hospitalproject.Dto.Board.BoardCreateRequestDto;
 import com.example.hospitalproject.Dto.Board.BoardResponseDto;
+import com.example.hospitalproject.Dto.Board.BoardStarPointRequestDto;
 import com.example.hospitalproject.Entity.Board.Board;
 import com.example.hospitalproject.Entity.User.RoleUserGrade;
 import com.example.hospitalproject.Exception.Board.NotFoundBoardException;
+import com.example.hospitalproject.Exception.Board.NotInputStarPointException;
 import com.example.hospitalproject.Exception.Board.UserNameDifferentException;
 import com.example.hospitalproject.Repository.Board.BoardRepository;
 import com.example.hospitalproject.Repository.User.UserRepository;
@@ -59,6 +61,7 @@ public class BoardService {
 
         board.setTitle(boardChangeRequestDto.getTitle());
         board.setContent(boardChangeRequestDto.getContent());
+
     }
 
     @Transactional
@@ -67,8 +70,31 @@ public class BoardService {
             throw new NotFoundBoardException();
         });
 
+        // 조회수 증가
         board.setViewCount(board.getViewCount() + 1);
 
         return new BoardResponseDto().toDo(board);
+    }
+
+    @Transactional
+    public void inputStarPoint(Long id, BoardStarPointRequestDto boardStarPointRequestDto){
+        Board board = boardRepository.findById(id).orElseThrow(() -> {
+           throw new NotFoundBoardException();
+        });
+
+        if(board.getStarPoint() < 1.0 || board.getStarPoint() > 5.0) {
+            throw new NotInputStarPointException();
+        }
+
+        starPointCheck(board, boardStarPointRequestDto);
+    }
+
+    @Transactional
+    protected void starPointCheck(Board board, BoardStarPointRequestDto boardStarPointRequestDto){
+        if(board.getStarPoint() == 0){
+            board.setStarPoint(boardStarPointRequestDto.getStarPoint());
+            return;
+        }
+        board.setStarPoint((board.getStarPoint() + boardStarPointRequestDto.getStarPoint()) / 2);
     }
 }

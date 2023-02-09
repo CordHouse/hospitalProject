@@ -2,6 +2,7 @@ package com.example.hospitalproject.Advice;
 
 import com.example.hospitalproject.Exception.AuthorityAccessLimitException;
 import com.example.hospitalproject.Exception.Board.NotFoundBoardException;
+import com.example.hospitalproject.Exception.Board.NotInputStarPointException;
 import com.example.hospitalproject.Exception.Board.UserNameDifferentException;
 import com.example.hospitalproject.Exception.Comment.NotFoundCommentIdException;
 import com.example.hospitalproject.Exception.Payment.PayCancelException;
@@ -108,6 +109,12 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Response userNameDifferentException(){
         return Response.failure(400, "게시글의 작성자가 아닙니다.");
+    }
+
+    @ExceptionHandler(NotInputStarPointException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response NotInputStarPointException(){
+        return Response.failure(400, "해당하지 않는 별점입니다.");
     }
 
     @ExceptionHandler(NotFoundCommentIdException.class)
