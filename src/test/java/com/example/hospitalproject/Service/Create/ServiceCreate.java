@@ -1,6 +1,8 @@
 package com.example.hospitalproject.Service.Create;
 
+import com.example.hospitalproject.Dto.ChatBoard.ChatBoardReceiverRequestDto;
 import com.example.hospitalproject.Dto.ChatBoard.ChattingCommentRequestDto;
+import com.example.hospitalproject.Dto.ChatBoard.EditPrivateTitleRequestDto;
 import com.example.hospitalproject.Dto.Payment.Card.CardInfoRequestDto;
 import com.example.hospitalproject.Dto.Payment.Card.Format.CustomDecimalFormat;
 import com.example.hospitalproject.Dto.Payment.Card.PayChargeRequestDto;
@@ -11,11 +13,6 @@ import com.example.hospitalproject.Entity.Payment.Code;
 import com.example.hospitalproject.Entity.Payment.Credit.Card;
 import com.example.hospitalproject.Entity.Payment.GroupCode;
 import com.example.hospitalproject.Entity.Payment.Payment;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.util.Collections;
 
 import static com.example.hospitalproject.Controller.Create.ControllerCreate.createUser;
 
@@ -85,9 +82,11 @@ public class ServiceCreate {
         );
     }
 
-    public static Authentication authentication() {
-        Authentication authentication = new UsernamePasswordAuthenticationToken("test", "", Collections.emptyList());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return authentication;
+    public static ChatBoardReceiverRequestDto createChatBoardReceiverDto() {
+        return new ChatBoardReceiverRequestDto("Tester1");
+    }
+
+    public static EditPrivateTitleRequestDto createEditPrivateTitleDto() {
+        return new EditPrivateTitleRequestDto("테스트 변경");
     }
 }
