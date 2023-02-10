@@ -28,7 +28,7 @@ public class ChattingService {
      */
     @Transactional
     public void chatRunStatus(Long id, ChattingCommentRequestDto chattingCommentRequestDto, User user){
-        ChatBoard chatBoard = chatBoardRepository.findById(id).orElseThrow(() -> {
+        ChatBoard chatBoard = chatBoardRepository.findByIdAndHostOrTarget(id, user.getUsername(), user.getUsername()).orElseThrow(() -> {
             throw new NotFoundChatBoardException();
         });
         if(user.getUsername().equals(chatBoard.getHost())) {
