@@ -43,7 +43,7 @@ public class ChatBoardServiceTest {
     /**
      * 서비스 센터 (고객센터) 채팅방
      * */
-    @DisplayName("채팅방(id)에서 채팅하기")
+    @DisplayName("서비스 센터 (고객센터) 채팅방")
     @Test
     void createServiceCenterChatBoardTest() {
         // given
