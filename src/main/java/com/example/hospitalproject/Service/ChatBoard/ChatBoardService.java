@@ -73,7 +73,7 @@ public class ChatBoardService{
      */
     @Transactional
     public void deleteChatBoard(long id, User user){
-        ChatBoard chatBoard = chatBoardRepository.findById(id).orElseThrow(NotFoundChatBoardException::new);
+        ChatBoard chatBoard = chatBoardRepository.findByIdAndHostOrTarget(id, user.getUsername(), user.getUsername()).orElseThrow(NotFoundChatBoardException::new);
         whoIsDelete(chatBoard, user.getUsername());
         hostAndTargetDoDeleteCheck(chatBoard, user);
     }

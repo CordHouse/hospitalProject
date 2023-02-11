@@ -129,9 +129,6 @@ public class CardServiceTest {
         Card cardAfter = createCardInit();
         User user = createUser();
 
-        System.out.println(cardBefore);
-        System.out.println(cardAfter);
-
         given(cardRepository.findAllByUser(user)).willReturn(Collections.singletonList(cardBefore));
         given(cardRepository.findByIdAndUser_Username(cardBefore.getId(), user.getUsername())).willReturn(Optional.of(cardBefore));
         given(cardRepository.findByIdAndUser_Username(id, user.getUsername())).willReturn(Optional.of(cardAfter));
