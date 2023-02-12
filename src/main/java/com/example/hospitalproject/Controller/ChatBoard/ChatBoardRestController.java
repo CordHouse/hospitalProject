@@ -7,6 +7,8 @@ import com.example.hospitalproject.Exception.UserException.NotFoundUserException
 import com.example.hospitalproject.Repository.User.UserRepository;
 import com.example.hospitalproject.Response.Response;
 import com.example.hospitalproject.Service.ChatBoard.ChatBoardService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -25,6 +27,7 @@ public class ChatBoardRestController {
     /**
      * 서비스 센터 (고객센터) 채팅방
      * */
+    @ApiOperation(value = "고객센터 채팅방", notes = "고객센터 채팅방 생성")
     @PostMapping("/create/service/center")
     @ResponseStatus(HttpStatus.OK)
     public void createChatBoard(){
@@ -35,6 +38,7 @@ public class ChatBoardRestController {
     /**
      * 개인 채팅방 (1:1)
      */
+    @ApiOperation(value = "개인 채팅방", notes = "개인 채팅방 생성")
     @PostMapping("/create/private")
     @ResponseStatus(HttpStatus.OK)
     public void createPrivateChatBoard(@RequestBody @Valid ChatBoardReceiverRequestDto chatBoardReceiverRequestDto){
@@ -47,6 +51,8 @@ public class ChatBoardRestController {
      */
     @PutMapping("/change/title/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "개인 채팅방 제목 변경", notes = "채팅방 제목 변경")
+    @ApiImplicitParam(name = "id", value = "채팅방 번호", example = "0")
     public void editPrivateTitle(@RequestBody @Valid EditPrivateTitleRequestDto editPrivateTitleRequestDto, @PathVariable long id){
         User user = userTokenValidCheck();
         chatBoardService.editPrivateTitle(editPrivateTitleRequestDto, id, user);
@@ -57,6 +63,7 @@ public class ChatBoardRestController {
      */
     @GetMapping("/my")
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "채팅방 목록 조회", notes = "채팅방 목록 조회")
     private Response getMyChatBoardList(){
         User user = userTokenValidCheck();
         return Response.success(chatBoardService.getMyChatBoardList(user));
@@ -67,6 +74,8 @@ public class ChatBoardRestController {
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "채팅방 삭제", notes = "채팅방 삭제")
+    @ApiImplicitParam(name = "id", value = "채팅방 번호", example = "0")
     public void deleteChatBoard(@PathVariable long id){
         User user = userTokenValidCheck();
         chatBoardService.deleteChatBoard(id, user);
