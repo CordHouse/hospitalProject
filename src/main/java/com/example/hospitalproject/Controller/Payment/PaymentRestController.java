@@ -5,6 +5,8 @@ import com.example.hospitalproject.Entity.User.User;
 import com.example.hospitalproject.Exception.UserException.NotFoundUserException;
 import com.example.hospitalproject.Repository.User.UserRepository;
 import com.example.hospitalproject.Service.Payment.PaymentService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -25,6 +27,7 @@ public class PaymentRestController {
      */
     @PostMapping("/common/charge")
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "결제 진행", notes = "소비자가 결제를 진행")
     public void payCharge(@RequestBody @Valid PayChargeRequestDto payChargeRequestDto){
         User user = userTokenValidCheck();
         paymentService.payCharge(payChargeRequestDto, user);
@@ -35,6 +38,8 @@ public class PaymentRestController {
      */
     @PostMapping("/common/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "결제 취소", notes = "소비자가 결제를 취소")
+    @ApiImplicitParam(name = "id", value = "취소할 거래내역", example = "0")
     public void payCancel(@PathVariable long id){
         User user = userTokenValidCheck();
         paymentService.payCancel(id, user);
@@ -45,6 +50,8 @@ public class PaymentRestController {
      */
     @PostMapping("/manager/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "결제 취소 승인 (관리자/매니저)", notes = "결제 취소 승인")
+    @ApiImplicitParam(name = "id", value = "승인할 취소내역", example = "0")
     public void payToDoApproval(@PathVariable long id){
         User user = userTokenValidCheck();
         paymentService.payToDoApproval(id, user);
