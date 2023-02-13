@@ -1,9 +1,7 @@
 package com.example.hospitalproject.Advice;
 
 import com.example.hospitalproject.Exception.AuthorityAccessLimitException;
-import com.example.hospitalproject.Exception.Board.NotFoundBoardException;
-import com.example.hospitalproject.Exception.Board.NotInputStarPointException;
-import com.example.hospitalproject.Exception.Board.UserNameDifferentException;
+import com.example.hospitalproject.Exception.Board.*;
 import com.example.hospitalproject.Exception.Comment.NotFoundCommentIdException;
 import com.example.hospitalproject.Exception.Payment.PayCancelException;
 import com.example.hospitalproject.Exception.Payment.DuplicateCardInfoException;
@@ -109,6 +107,18 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Response userNameDifferentException(){
         return Response.failure(400, "게시글의 작성자가 아닙니다.");
+    }
+
+    @ExceptionHandler(NotSupportedExtensionException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response notSupportedExtensionException(NotSupportedExtensionException e) {
+        return Response.failure(400, e + "는 지원하지 않는 확장자입니다. 파일을 다시 한 번 확인해주세요.");
+    }
+
+    @ExceptionHandler(SaveImageException.class)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    public Response saveImageException() {
+        return Response.failure(406, "이미지 저장 과정 도중 문제가 발생하였습니다.");
     }
 
     @ExceptionHandler(NotInputStarPointException.class)
