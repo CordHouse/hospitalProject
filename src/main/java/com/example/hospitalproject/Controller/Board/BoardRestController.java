@@ -24,7 +24,7 @@ public class BoardRestController {
      */
     @PostMapping("/board")
     @ResponseStatus(HttpStatus.OK)
-    public void create(@RequestBody @Valid BoardCreateRequestDto boardCreateRequestDto){
+    public void create(@ModelAttribute @Valid BoardCreateRequestDto boardCreateRequestDto){
         boardService.create(boardCreateRequestDto);
     }
 
@@ -47,7 +47,7 @@ public class BoardRestController {
      */
     @PutMapping("/board/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void change(@PathVariable Long id, @RequestBody @Valid BoardChangeRequestDto boardChangeRequestDto){
+    public void change(@PathVariable Long id, @ModelAttribute @Valid BoardChangeRequestDto boardChangeRequestDto){
         boardService.change(id, boardChangeRequestDto);
     }
 
