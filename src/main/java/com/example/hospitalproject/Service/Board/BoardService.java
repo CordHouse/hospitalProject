@@ -1,13 +1,16 @@
 package com.example.hospitalproject.Service.Board;
 
+import com.example.hospitalproject.Config.image.ImageManager;
 import com.example.hospitalproject.Dto.Board.BoardChangeRequestDto;
 import com.example.hospitalproject.Dto.Board.BoardCreateRequestDto;
 import com.example.hospitalproject.Dto.Board.BoardResponseDto;
 import com.example.hospitalproject.Dto.Board.BoardStarPointRequestDto;
 import com.example.hospitalproject.Entity.Board.Board;
+import com.example.hospitalproject.Entity.Image.Image;
 import com.example.hospitalproject.Entity.User.RoleUserGrade;
 import com.example.hospitalproject.Exception.Board.NotFoundBoardException;
 import com.example.hospitalproject.Exception.Board.NotInputStarPointException;
+import com.example.hospitalproject.Exception.Board.SaveImageException;
 import com.example.hospitalproject.Exception.Board.UserNameDifferentException;
 import com.example.hospitalproject.Repository.Board.BoardRepository;
 import com.example.hospitalproject.Repository.User.UserRepository;
@@ -17,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,18 +29,29 @@ import java.util.stream.Collectors;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final ImageManager imageManager;
 
     @Transactional
     public void create(BoardCreateRequestDto requestDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Board board = new Board();
+        Board board = Board.builder()
+                .title(requestDto.getTitle())
+                .content(requestDto.getContent())
+                .writer(authentication.getName())
+                .roleUserGrade(RoleUserGrade
+                        .findUserGrade(authentication.getAuthorities()
+                                .stream().map(s -> s.toString())
+                                .collect(Collectors.joining())))
+                .build();
 
-        board.setTitle(requestDto.getTitle());
-        board.setContent(requestDto.getContent());
-        board.setWriter(authentication.getName());
-        board.setRoleUserGrade(RoleUserGrade.findUserGrade(
-                authentication.getAuthorities().stream().map(s -> s.toString()).collect(Collectors.joining())
-        ));
+        if(!requestDto.getFileList().isEmpty()) {
+            try {
+                List<Image> fileList = imageManager.saveImages(requestDto.getFileList());
+                board.setImageList(fileList);
+            } catch(IOException e) {
+                throw new SaveImageException();
+            }
+        }
 
         boardRepository.save(board);
     }
@@ -55,12 +71,18 @@ public class BoardService {
         String user = authentication.getName();
         String boardUser = board.getWriter();
 
-        if(!user.equals(boardUser)){
+        if(!user.equals(boardUser)) {
             throw new UserNameDifferentException();
         }
 
         board.setTitle(boardChangeRequestDto.getTitle());
         board.setContent(boardChangeRequestDto.getContent());
+
+        try {
+            board.setImageList(imageManager.saveImages(boardChangeRequestDto.getImageList()));
+        } catch(IOException e) {
+            throw new SaveImageException();
+        }
 
     }
 
