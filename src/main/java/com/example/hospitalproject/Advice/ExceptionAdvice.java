@@ -3,6 +3,8 @@ package com.example.hospitalproject.Advice;
 import com.example.hospitalproject.Exception.AuthorityAccessLimitException;
 import com.example.hospitalproject.Exception.Board.*;
 import com.example.hospitalproject.Exception.Comment.NotFoundCommentIdException;
+import com.example.hospitalproject.Exception.Email.NotFoundEmailTokenInfoException;
+import com.example.hospitalproject.Exception.Email.NotValidEmailException;
 import com.example.hospitalproject.Exception.Payment.PayCancelException;
 import com.example.hospitalproject.Exception.Payment.DuplicateCardInfoException;
 import com.example.hospitalproject.Exception.Payment.NotFoundBankException;
@@ -161,5 +163,17 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response authorityAccessLimitException() {
         return Response.failure(404, "접근권한이 없습니다.");
+    }
+
+    @ExceptionHandler(NotFoundEmailTokenInfoException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notFoundEmailTokenInfo() {
+        return Response.failure(404, "토큰 정보가 유효하지 않습니다.");
+    }
+
+    @ExceptionHandler(NotValidEmailException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notValidEmailException(NotValidEmailException e) {
+        return Response.failure(404, e.getMessage());
     }
 }
