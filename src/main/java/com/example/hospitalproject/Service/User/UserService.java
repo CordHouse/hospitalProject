@@ -4,13 +4,16 @@ import com.example.hospitalproject.Config.jwt.TokenProvider;
 import com.example.hospitalproject.Dto.Token.RefreshTokenDto;
 import com.example.hospitalproject.Dto.Token.TokenReIssueDto;
 import com.example.hospitalproject.Dto.User.*;
+import com.example.hospitalproject.Entity.Email.EmailToken;
 import com.example.hospitalproject.Entity.User.RefreshToken;
 import com.example.hospitalproject.Entity.User.User;
 import com.example.hospitalproject.Entity.User.RoleUserGrade;
+import com.example.hospitalproject.Exception.Email.NotValidEmailException;
 import com.example.hospitalproject.Exception.RefreshToken.NotFoundRefreshTokenException;
 import com.example.hospitalproject.Exception.UserException.LoginFailureException;
 import com.example.hospitalproject.Exception.UserException.NotFoundUserException;
 import com.example.hospitalproject.Exception.UserException.UserInfoDuplicationException;
+import com.example.hospitalproject.Repository.Email.EmailRepository;
 import com.example.hospitalproject.Repository.RefreshToken.RefreshTokenRepository;
 import com.example.hospitalproject.Repository.User.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +21,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +40,8 @@ public class UserService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
+    private final EmailRepository emailRepository;
+
     @Transactional
     public String signUp(UserRegisterRequestDto userRegisterRequestDto){
         if(userRepository.existsUserByUsernameOrEmailOrPhone(userRegisterRequestDto.getUsername(),
@@ -53,6 +57,13 @@ public class UserService {
                 userRegisterRequestDto.getEmail(),
                 userRegisterRequestDto.getAddress(),
                 RoleUserGrade.ROLE_COMMON_MEMBER);
+
+        EmailToken emailToken = emailRepository.findByUsername(userRegisterRequestDto.getUsername()).orElseThrow(() -> {
+            throw new NotValidEmailException("이메일을 인증을 먼저 진행해주세요.");
+        });
+        if(emailToken.getExpired().equals("false")){
+            throw new NotValidEmailException("이메일이 인증되지 않았습니다.");
+        }
         userRepository.save(user);
         return "가입 성공";
     }

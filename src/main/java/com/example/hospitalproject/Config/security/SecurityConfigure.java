@@ -54,7 +54,7 @@ public class SecurityConfigure {
                 .and()
                 .authorizeRequests()
                 .antMatchers(PERMIT_URL_ARRAY).permitAll()
-                .antMatchers("/home/user/sign-in", "/home/user/sign-up", "/home/user/id", "/home/user/password/reissue").permitAll()
+                .antMatchers("/home/user/sign-in", "/home/user/sign-up", "/home/user/id", "/home/user/password/reissue", "/home/user/sign-up/confirm/email/valid", "/confirm/email").permitAll()
                 .antMatchers("/chat/**").access("hasRole(\"ADMIN\") or hasRole(\"MANAGER\") or hasRole(\"EXCELLENT_MEMBER\") or hasRole(\"COMMON_MEMBER\")")
                 .antMatchers("/chatting/**").access("hasRole(\"ADMIN\") or hasRole(\"MANAGER\") or hasRole(\"EXCELLENT_MEMBER\") or hasRole(\"COMMON_MEMBER\")")
                 .antMatchers("/payment/common/**").access("hasRole(\"ADMIN\") or hasRole(\"MANAGER\") or hasRole(\"EXCELLENT_MEMBER\") or hasRole(\"COMMON_MEMBER\")")
