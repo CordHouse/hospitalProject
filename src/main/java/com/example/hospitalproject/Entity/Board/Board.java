@@ -42,11 +42,17 @@ public class Board {
     @Column(nullable = false, name = "writer")
     private String writer;
 
-    @Column(name = "viewCount", columnDefinition = "integer default 0")
+    @Column(name = "viewCount", columnDefinition = "Integer default 0")
     private Integer viewCount;
 
     @Column(name = "starPoint", columnDefinition = "Double default 0")
     private Double starPoint;
+
+    @Column(name = "starPointUserCount", columnDefinition = "Integer default 0")
+    private Integer starPointUserCount;
+
+    @Column(name = "starPointTotal", columnDefinition = "Double default 0")
+    private Double starPointTotal;
 
     @Enumerated(EnumType.STRING)
     private RoleUserGrade roleUserGrade;
