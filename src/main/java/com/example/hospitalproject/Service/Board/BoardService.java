@@ -101,12 +101,16 @@ public class BoardService {
     @Transactional
     public void inputStarPoint(Long id, BoardStarPointRequestDto boardStarPointRequestDto){
         Board board = boardRepository.findById(id).orElseThrow(() -> {
-           throw new NotFoundBoardException();
+            throw new NotFoundBoardException();
         });
 
-        if(board.getStarPoint() < 1.0 || board.getStarPoint() > 5.0) {
+        if(boardStarPointRequestDto.getStarPoint() < 1.0 || boardStarPointRequestDto.getStarPoint() > 5.0) {
             throw new NotInputStarPointException();
         }
+
+        // 별점 유저 수, 총점
+        board.setStarPointUserCount(board.getStarPointUserCount() + 1);
+        board.setStarPointTotal(board.getStarPointTotal() + boardStarPointRequestDto.getStarPoint());
 
         starPointCheck(board, boardStarPointRequestDto);
     }
@@ -117,6 +121,6 @@ public class BoardService {
             board.setStarPoint(boardStarPointRequestDto.getStarPoint());
             return;
         }
-        board.setStarPoint((board.getStarPoint() + boardStarPointRequestDto.getStarPoint()) / 2);
+        board.setStarPoint(board.getStarPointTotal() / board.getStarPointUserCount());
     }
 }
