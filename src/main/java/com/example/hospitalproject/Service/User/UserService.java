@@ -135,7 +135,7 @@ public class UserService {
 
         findUser.setPassword(passwordEncoder.encode(randomNumber));
 
-        emailService.passwordReissueEmailSender(findUser, findUser.getPassword());
+        emailService.passwordReissueEmailSender(findUser, randomNumber);
 
         return randomNumber;
     }
