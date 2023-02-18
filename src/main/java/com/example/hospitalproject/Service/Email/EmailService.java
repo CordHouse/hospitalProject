@@ -14,6 +14,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
 
+import static com.example.hospitalproject.Service.Email.html.CreateEmailHtmlSource.emailHtmlSendSource;
+
 @Service
 @RequiredArgsConstructor
 public class EmailService {
@@ -42,12 +44,13 @@ public class EmailService {
         EmailToken emailToken = doCreateEmailToken(username);
 
         String toEmail = "http://localhost:8080/confirm/email?token="+emailToken.getId();
+        String body = emailHtmlSendSource(toEmail);
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
             mimeMessage.addRecipients(Message.RecipientType.TO, email); // 받는 사람 이메일
             mimeMessage.setSubject("FnDoc 회원가입 이메일 인증입니다."); // 메일 제목
-            mimeMessage.setContent("<a href="+toEmail+">"+"인증 링크</a>", "text/html;charset=UTF-8"); // 내용
+            mimeMessage.setContent(body, "text/html;charset=UTF-8"); // 내용
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
