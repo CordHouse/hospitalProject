@@ -14,12 +14,19 @@ import javax.validation.Valid;
 public class EmailRestController {
     private final EmailService emailService;
 
+    /**
+     * 이메일 인증 링크 클릭시 보이는 인증 처리
+     */
     @GetMapping("/confirm/email")
     @ResponseStatus(HttpStatus.OK)
-    public Response confirmEmail(@RequestParam String token) {
-        return Response.success(emailService.confirmEmail(token));
+    public String confirmEmail(@RequestParam String token) {
+        emailService.confirmEmail(token);
+        return "이메일 인증이 정상 처리되었습니다.";
     }
 
+    /**
+     * 회원가입 전 이메일 인증
+     */
     @PostMapping("/home/user/sign-up/confirm/email/valid")
     @ResponseStatus(HttpStatus.OK)
     public Response createEmailToken(@RequestBody @Valid CreateEmailRequestDto createEmailRequestDto) {

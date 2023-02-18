@@ -16,6 +16,7 @@ import com.example.hospitalproject.Exception.UserException.UserInfoDuplicationEx
 import com.example.hospitalproject.Repository.Email.EmailRepository;
 import com.example.hospitalproject.Repository.RefreshToken.RefreshTokenRepository;
 import com.example.hospitalproject.Repository.User.UserRepository;
+import com.example.hospitalproject.Service.Email.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -41,6 +42,8 @@ public class UserService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     private final EmailRepository emailRepository;
+
+    private final EmailService emailService;
 
     @Transactional
     public String signUp(UserRegisterRequestDto userRegisterRequestDto){
@@ -131,6 +134,8 @@ public class UserService {
         String randomNumber = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 10) + "!@#";
 
         findUser.setPassword(passwordEncoder.encode(randomNumber));
+
+        emailService.passwordReissueEmailSender(findUser, randomNumber);
 
         return randomNumber;
     }
