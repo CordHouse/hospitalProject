@@ -15,6 +15,7 @@ import javax.mail.internet.MimeMessage;
 import java.time.LocalDateTime;
 
 import static com.example.hospitalproject.Service.Email.html.CreateEmailHtmlSource.emailHtmlSendSource;
+import static com.example.hospitalproject.Service.Email.html.CreateEmailHtmlSource.passwordHtmlSendSource;
 
 @Service
 @RequiredArgsConstructor
@@ -95,10 +96,11 @@ public class EmailService {
     // 비밀번호 재발급 이메일 전송
     public void passwordReissueEmailSender(User user, String tempPassword) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        String body = passwordHtmlSendSource(user.getUsername(), tempPassword);
         try {
             mimeMessage.addRecipients(Message.RecipientType.TO, user.getEmail()); // 받는 사람 이메일
             mimeMessage.setSubject("FnDoc 비밀번호 변경 인증 링크입니다."); // 메일 제목
-            mimeMessage.setContent("임시비밀번호가 발급되었습니다.<br/>로그인 즉시 비밀번호를 변경해주세요.<br/>"+tempPassword, "text/html;charset=UTF-8"); // 내용
+            mimeMessage.setContent(body, "text/html;charset=UTF-8"); // 내용
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
