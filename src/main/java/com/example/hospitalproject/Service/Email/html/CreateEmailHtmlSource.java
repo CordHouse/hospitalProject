@@ -88,7 +88,7 @@ public class CreateEmailHtmlSource {
         return "<html>\n" +
                 "<head>\n" +
                 "\t<meta charset=\"utf-8\">\n" +
-                "\t<title>비밀번호 재설정</title>\n" +
+                "\t<title>임시 비밀번호 발급</title>\n" +
                 "</head>\n" +
                 "<body style=\"margin: 0;\n" +
                 "\t\t\tpadding: 0;\n" +
@@ -114,7 +114,7 @@ public class CreateEmailHtmlSource {
                 "\tFn<span style = \"color : #b7affff5; font-family: 'Montserrat';\">D</span>oc\n" +
                 "\t<span \n" +
                 "\t\tstyle = \"color : #f6f6f6; font-family: 'Montserrat';\">\n" +
-                "\t\t<br/>이메일 인증</span>\n" +
+                "\t\t<br/>임시 비밀번호 발급</span>\n" +
                 "\t</div>\n" +
                 "\n" +
                 "\t\t<div class=\"message\" \n" +
