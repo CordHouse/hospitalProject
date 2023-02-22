@@ -1,5 +1,6 @@
 package com.example.hospitalproject.Controller.Create;
 
+import com.example.hospitalproject.Dto.Email.CreateEmailRequestDto;
 import com.example.hospitalproject.Entity.User.RoleUserGrade;
 import com.example.hospitalproject.Entity.User.User;
 import lombok.Builder;
@@ -19,5 +20,12 @@ public class ControllerCreate {
         Authentication authentication = new UsernamePasswordAuthenticationToken(createUser().getId(), "", Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return authentication;
+    }
+
+    public static CreateEmailRequestDto createEmailRequest() {
+        CreateEmailRequestDto createEmailRequestDto = new CreateEmailRequestDto();
+        createEmailRequestDto.setUsername(createUser().getUsername());
+        createEmailRequestDto.setEmail(createUser().getEmail());
+        return createEmailRequestDto;
     }
 }

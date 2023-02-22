@@ -1,5 +1,6 @@
 package com.example.hospitalproject.Service.Email;
 
+import com.example.hospitalproject.Dto.Email.CreateEmailRequestDto;
 import com.example.hospitalproject.Entity.Email.EmailToken;
 import com.example.hospitalproject.Entity.User.User;
 import com.example.hospitalproject.Exception.Email.NotFoundEmailTokenInfoException;
@@ -40,16 +41,16 @@ public class EmailService {
      * simpleMailMessage.setText("<a href=\"http://localhost:8080/confirm/email?token="+emailToken.getId()+">"+"인증 링크</a>");
      */
     @Transactional
-    public String createEmailToken(String username, String email) {
+    public String createEmailToken(CreateEmailRequestDto createEmailRequestDto) {
         // 유저 아이디가 이미 존재한다면 기존 uuid 삭제 후 재발급
-        EmailToken emailToken = doCreateEmailToken(username);
+        EmailToken emailToken = doCreateEmailToken(createEmailRequestDto.getUsername());
 
         String toEmail = "http://localhost:8080/confirm/email?token="+emailToken.getId();
         String body = emailHtmlSendSource(toEmail);
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
-            mimeMessage.addRecipients(Message.RecipientType.TO, email); // 받는 사람 이메일
+            mimeMessage.addRecipients(Message.RecipientType.TO, createEmailRequestDto.getEmail()); // 받는 사람 이메일
             mimeMessage.setSubject("FnDoc 회원가입 이메일 인증입니다."); // 메일 제목
             mimeMessage.setContent(body, "text/html;charset=UTF-8"); // 내용
         } catch (MessagingException e) {

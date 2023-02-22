@@ -30,6 +30,6 @@ public class EmailRestController {
     @PostMapping("/home/user/sign-up/confirm/email/valid")
     @ResponseStatus(HttpStatus.OK)
     public Response createEmailToken(@RequestBody @Valid CreateEmailRequestDto createEmailRequestDto) {
-        return Response.success(emailService.createEmailToken(createEmailRequestDto.getUsername(), createEmailRequestDto.getEmail()));
+        return Response.success(emailService.createEmailToken(createEmailRequestDto));
     }
 }
