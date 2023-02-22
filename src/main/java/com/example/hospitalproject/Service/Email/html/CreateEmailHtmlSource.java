@@ -84,6 +84,9 @@ public class CreateEmailHtmlSource {
                 "</html>";
     }
 
+    /**
+     * 임시 비밀번호 발급
+     */
     public static String passwordHtmlSendSource(String username, String password) {
         return "<html>\n" +
                 "<head>\n" +
