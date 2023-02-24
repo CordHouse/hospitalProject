@@ -12,4 +12,6 @@ public interface EmailRepository extends JpaRepository<EmailToken, Long> {
     Optional<EmailToken> findByIdAndExpirationDateAfterAndExpired(String emailTokenId, LocalDateTime now, String expired);
 
     Optional<EmailToken> findByUsername(String username);
+
+    void deleteByUsername(String username);
 }
