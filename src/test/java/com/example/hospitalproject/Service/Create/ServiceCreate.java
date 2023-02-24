@@ -9,10 +9,12 @@ import com.example.hospitalproject.Dto.Payment.Card.PayChargeRequestDto;
 import com.example.hospitalproject.Entity.Chatting.ChatBoard;
 import com.example.hospitalproject.Entity.Chatting.ChatTitleType;
 import com.example.hospitalproject.Entity.Chatting.Chatting;
+import com.example.hospitalproject.Entity.Email.EmailToken;
 import com.example.hospitalproject.Entity.Payment.Code;
 import com.example.hospitalproject.Entity.Payment.Credit.Card;
 import com.example.hospitalproject.Entity.Payment.GroupCode;
 import com.example.hospitalproject.Entity.Payment.Payment;
+
 
 import static com.example.hospitalproject.Controller.Create.ControllerCreate.createUser;
 
@@ -88,5 +90,11 @@ public class ServiceCreate {
 
     public static EditPrivateTitleRequestDto createEditPrivateTitleDto() {
         return new EditPrivateTitleRequestDto("테스트 변경");
+    }
+
+    public static EmailToken createEmailToken(String token) {
+        EmailToken emailToken = new EmailToken(createUser().getUsername());
+        emailToken.setId(token);
+        return emailToken;
     }
 }
