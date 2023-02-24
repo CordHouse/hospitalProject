@@ -71,7 +71,7 @@ public class EmailService {
         if(emailTokenUsernameCheck(username)) {
             return saveEmailToken(username);
         }
-        emailRepository.delete(emailRepository.findByUsername(username).orElseThrow());
+        emailRepository.deleteByUsername(username);
         return saveEmailToken(username);
     }
 
