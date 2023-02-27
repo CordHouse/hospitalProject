@@ -129,6 +129,10 @@ public class ExceptionAdvice {
         return Response.failure(400, "해당하지 않는 별점입니다.");
     }
 
+    @ExceptionHandler(StarPointRoundUpException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Response StarPointRoundUpException() { return Response.failure(400, "별점을 0.5단위로 입력해주세요."); }
+
     @ExceptionHandler(NotFoundCommentIdException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response notFoundCommentIdException() {
