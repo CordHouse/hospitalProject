@@ -4,6 +4,7 @@ import com.example.hospitalproject.Entity.User.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Repository
@@ -19,4 +20,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByPassword(String password);
 
     boolean existsUserByUsernameOrEmailOrPhone(String username, String email, String phone);
+
+    User findByUsernameAndPasswordRecycleBefore(String username, LocalDate now);
 }
