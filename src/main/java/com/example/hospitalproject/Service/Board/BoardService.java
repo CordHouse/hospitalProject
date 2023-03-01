@@ -8,12 +8,8 @@ import com.example.hospitalproject.Dto.Board.BoardStarPointRequestDto;
 import com.example.hospitalproject.Entity.Board.Board;
 import com.example.hospitalproject.Entity.Image.Image;
 import com.example.hospitalproject.Entity.User.RoleUserGrade;
-import com.example.hospitalproject.Exception.Board.NotFoundBoardException;
-import com.example.hospitalproject.Exception.Board.NotInputStarPointException;
-import com.example.hospitalproject.Exception.Board.SaveImageException;
-import com.example.hospitalproject.Exception.Board.UserNameDifferentException;
+import com.example.hospitalproject.Exception.Board.*;
 import com.example.hospitalproject.Repository.Board.BoardRepository;
-import com.example.hospitalproject.Repository.User.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +24,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;
     private final ImageManager imageManager;
 
     @Transactional
@@ -104,8 +99,14 @@ public class BoardService {
             throw new NotFoundBoardException();
         });
 
+        // 별점 범위 1.0 ~ 5.0
         if(boardStarPointRequestDto.getStarPoint() < 1.0 || boardStarPointRequestDto.getStarPoint() > 5.0) {
             throw new NotInputStarPointException();
+        }
+
+        // 별점 단위를 0.5 단위로 설정
+        if(boardStarPointRequestDto.getStarPoint() % 0.5 != 0){
+            throw new StarPointRoundUpException();
         }
 
         // 별점 유저 수, 총점
