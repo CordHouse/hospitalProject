@@ -47,7 +47,11 @@ public class User {
     @PrePersist // DB에 Insert 되기 직전에 실행된다.
     public void createDate(){
         this.createDate = LocalDate.now();
+        this.passwordRecycle = LocalDate.now().plusMonths(3);
     }
+
+    @DateTimeFormat(pattern = "yyyy-mm-dd")
+    private LocalDate passwordRecycle;
 
     public User(String name, String username, String password, String birthday, String phone, String email, String address, RoleUserGrade roleUserGrade){
         this.name = name;
@@ -60,8 +64,4 @@ public class User {
         this.roleUserGrade = roleUserGrade;
     }
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "gradeId", nullable = false)
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    private UserGrade userGrade;
 }
