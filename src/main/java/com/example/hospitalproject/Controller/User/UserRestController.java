@@ -1,16 +1,16 @@
 package com.example.hospitalproject.Controller.User;
 
 import com.example.hospitalproject.Dto.Token.TokenReIssueDto;
-import com.example.hospitalproject.Dto.User.UserGradeSearchRequestDto;
-import com.example.hospitalproject.Dto.User.UserIdSearchRequestDto;
-import com.example.hospitalproject.Dto.User.UserPasswordChangeRequestDto;
-import com.example.hospitalproject.Dto.User.UserPasswordReissueRequestDto;
-import com.example.hospitalproject.Dto.User.UserRegisterRequestDto;
-import com.example.hospitalproject.Dto.User.UserSignInRequestDto;
+import com.example.hospitalproject.Dto.User.*;
+import com.example.hospitalproject.Entity.User.User;
+import com.example.hospitalproject.Exception.UserException.NotFoundUserException;
+import com.example.hospitalproject.Repository.User.UserRepository;
 import com.example.hospitalproject.Response.Response;
 import com.example.hospitalproject.Service.User.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,6 +20,7 @@ import javax.validation.Valid;
 @RequestMapping("/home")
 public class UserRestController {
     private final UserService userService;
+    private final UserRepository userRepository;
     /*
     * 회원 가입 로직
     * */
@@ -90,5 +91,22 @@ public class UserRestController {
     @ResponseStatus(HttpStatus.OK)
     public Response searchUserGrade(@RequestBody @Valid UserGradeSearchRequestDto userGradeSearchRequestDto){
         return Response.success(userService.searchUserGrade(userGradeSearchRequestDto));
+    }
+
+    /**
+     * 3개월 마다 주기적으로 비밀번호 변경 권유하는 로직
+     */
+    @PostMapping("/user/password/change/recycle")
+    @ResponseStatus(HttpStatus.OK)
+    public void passwordRecycle(@RequestBody @Valid UserPasswordChangeRecycleRequestDto userPasswordChangeRecycleRequestDto) {
+        User user = userSessionInfo();
+        userService.passwordRecycle(userPasswordChangeRecycleRequestDto, user);
+    }
+
+    private User userSessionInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userRepository.findByUsername(authentication.getName()).orElseThrow(() -> {
+            throw new NotFoundUserException("해당 계정은 존재하지 않습니다.");
+        });
     }
 }
