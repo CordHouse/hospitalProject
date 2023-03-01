@@ -55,7 +55,7 @@ public class UserControllerTest {
 
         //stub
         given(userService.signIn(requestDto))
-                .willReturn(new UserSignInResponseDto("OriginToken", "RefreshToken"));
+                .willReturn(new UserSignInResponseDto("OriginToken", "RefreshToken", ""));
 
         //when
         mockMvc.perform(post("/home/user/sign-in")
