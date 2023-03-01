@@ -16,6 +16,7 @@ import com.example.hospitalproject.Exception.Payment.NotFoundPayTypeException;
 import com.example.hospitalproject.Exception.RefreshToken.NotFoundRefreshTokenException;
 import com.example.hospitalproject.Exception.UserException.LoginFailureException;
 import com.example.hospitalproject.Exception.UserException.NotFoundUserException;
+import com.example.hospitalproject.Exception.UserException.NotMatchPassword;
 import com.example.hospitalproject.Exception.UserException.UserInfoDuplicationException;
 import com.example.hospitalproject.Response.Response;
 import org.springframework.http.HttpStatus;
@@ -174,6 +175,12 @@ public class ExceptionAdvice {
     @ExceptionHandler(NotValidEmailException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Response notValidEmailException(NotValidEmailException e) {
+        return Response.failure(404, e.getMessage());
+    }
+
+    @ExceptionHandler(NotMatchPassword.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response notMatchPassword(NotMatchPassword e) {
         return Response.failure(404, e.getMessage());
     }
 }
