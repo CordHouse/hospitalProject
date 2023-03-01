@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
@@ -12,6 +13,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 public class UserRegisterRequestDto {
     @NotBlank(message = "이름을 입력해주세요.")
+    @Pattern(regexp = "^[a-zA-Zㄱ-ㅎ가-힣]{3,5}", message = "이름은 최대 5글자까지 허용됩니다.")
     private String name;
 
     @NotBlank(message = "아이디를 입력해주세요.")
