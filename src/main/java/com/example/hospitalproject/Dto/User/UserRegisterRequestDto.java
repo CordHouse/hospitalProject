@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
@@ -14,6 +15,7 @@ import javax.validation.constraints.Pattern;
 public class UserRegisterRequestDto {
     @ApiModelProperty(value = "회원 가입시에 필요한 사용자의 이름(5자 제한)", example = "홍길동")
     @NotBlank(message = "이름을 입력해주세요.")
+    @Pattern(regexp = "^[a-zA-Zㄱ-ㅎ가-힣]{3,5}", message = "이름은 최대 5글자까지 허용됩니다.")
     private String name;
 
     @ApiModelProperty(value = "회원 가입시에 필요한 아이디(숫자, 영어 소문자, 대문자로 구성된 길이 2 이상 10미만의 아이디)", example = "test1234")

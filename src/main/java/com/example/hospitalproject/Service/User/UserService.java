@@ -12,6 +12,7 @@ import com.example.hospitalproject.Exception.Email.NotValidEmailException;
 import com.example.hospitalproject.Exception.RefreshToken.NotFoundRefreshTokenException;
 import com.example.hospitalproject.Exception.UserException.LoginFailureException;
 import com.example.hospitalproject.Exception.UserException.NotFoundUserException;
+import com.example.hospitalproject.Exception.UserException.NotMatchPassword;
 import com.example.hospitalproject.Exception.UserException.UserInfoDuplicationException;
 import com.example.hospitalproject.Repository.Email.EmailRepository;
 import com.example.hospitalproject.Repository.RefreshToken.RefreshTokenRepository;
@@ -26,6 +27,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -91,7 +93,12 @@ public class UserService {
 
         refreshTokenRepository.save(refreshToken);
 
-        return new UserSignInResponseDto(createdToken.getOriginToken(), createdToken.getRefreshToken());
+        // 로그인 이후 비밀번호 변경한지 3개월이 됬으면 비밀번호 변경 추천 로직 띄우기
+        User user = userRepository.findByUsernameAndPasswordRecycleBefore(findUser.getUsername(), LocalDate.now());
+        if(user != null){
+            return new UserSignInResponseDto(createdToken.getOriginToken(), createdToken.getRefreshToken(), "비밀번호를 변경해주세요.");
+        }
+        return new UserSignInResponseDto().toDo(createdToken.getOriginToken(), createdToken.getRefreshToken());
     }
 
     @Transactional
@@ -154,5 +161,19 @@ public class UserService {
     public String searchUserGrade(UserGradeSearchRequestDto userGradeSearchRequestDto){
         User user = userRepository.findByUsername(userGradeSearchRequestDto.getUsername()).orElseThrow();
         return RoleUserGrade.findUserGrade(user.getRoleUserGrade().toString()).getGrade();
+    }
+
+    @Transactional
+    public void passwordRecycle(UserPasswordChangeRecycleRequestDto userPasswordChangeRecycleRequestDto, User user) {
+        if(!passwordEncoder.matches(user.getPassword(), userPasswordChangeRecycleRequestDto.getBeforePassword())) {
+            throw new NotMatchPassword("이전 비밀번호가 일치하지 않습니다.");
+        }
+        if(!userPasswordChangeRecycleRequestDto.getBeforePassword().equals(userPasswordChangeRecycleRequestDto.getAfterPassword())) {
+            throw new NotMatchPassword("이전 비밀번호와 변경할 비밀번호가 일치합니다.");
+        }
+        if(!userPasswordChangeRecycleRequestDto.getAfterPassword().equals(userPasswordChangeRecycleRequestDto.getAfterPasswordCheck())) {
+            throw new NotMatchPassword("변경할 비밀번호가 일치하지 않습니다.");
+        }
+        user.setPassword(passwordEncoder.encode(userPasswordChangeRecycleRequestDto.getAfterPassword()));
     }
 }
