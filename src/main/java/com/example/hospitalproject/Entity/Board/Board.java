@@ -61,5 +61,5 @@ public class Board {
     private boolean deleted;
 
     @OneToMany(mappedBy = "board", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<Image> imageList = new ArrayList<>();
+    private List<Image> imageList;
 }
