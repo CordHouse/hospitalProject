@@ -45,7 +45,7 @@ public class EmailService {
         // 유저 아이디가 이미 존재한다면 기존 uuid 삭제 후 재발급
         EmailToken emailToken = doCreateEmailToken(createEmailRequestDto.getUsername());
 
-        String toEmail = "http://localhost:8080/confirm/email?token="+emailToken.getId();
+        String toEmail = "http://13.124.203.176:8080/confirm/email?token="+emailToken.getId();
         String body = emailHtmlSendSource(toEmail);
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
