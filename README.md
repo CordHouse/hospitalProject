@@ -1,7 +1,7 @@
 <!--Header-->
 # 1. hospitalProject
 - ProjectName : **FnDoc (Find Doctor)**
-- DevelopPeriod : *2022.12.20 ~ ing*
+- DevelopPeriod : *2022.12.20 ~ 2023.03.02*
 - ProjectSize : **Middle (Backend + FrontEnd)**
 ---
 # 2. Info
